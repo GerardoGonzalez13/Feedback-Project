@@ -17,7 +17,7 @@ class PythonInterface:
     def XPluginStart(self):
         self.Name = "UDPBridge"
         self.Sig  = "team.udpbridge"
-        self.Desc = "Telemetry + command bridge over UDP."
+        self.Desc = "Telemetry + command bridge over UDP (latched enable)."
 
         xp.sys_log(f"[UDPBridge] START telem={TELEM_IP}:{TELEM_PORT} cmd=0.0.0.0:{CMD_PORT} Hz={HZ}")
 
@@ -31,31 +31,34 @@ class PythonInterface:
         self.sock_rx.setblocking(False)
 
         # ---- Telemetry DataRefs (units per DataRefs.txt) ----
-        self.dr_phi = xp.findDataRef("sim/flightmodel/position/phi")       # deg :contentReference[oaicite:4]{index=4}
-        self.dr_p   = xp.findDataRef("sim/flightmodel/position/P")         # deg/s :contentReference[oaicite:5]{index=5}
-        self.dr_psi = xp.findDataRef("sim/flightmodel/position/psi")       # deg :contentReference[oaicite:6]{index=6}
-        self.dr_r   = xp.findDataRef("sim/flightmodel/position/R")         # deg/s :contentReference[oaicite:7]{index=7}
-        self.dr_alt = xp.findDataRef("sim/flightmodel/position/elevation") # meters :contentReference[oaicite:8]{index=8}
-        self.dr_vv  = xp.findDataRef("sim/flightmodel/position/vh_ind")    # m/s :contentReference[oaicite:9]{index=9}
-        self.dr_ias = xp.findDataRef("sim/flightmodel/position/indicated_airspeed") # kias :contentReference[oaicite:10]{index=10}
+        self.dr_phi = xp.findDataRef("sim/flightmodel/position/phi")        # deg
+        self.dr_p   = xp.findDataRef("sim/flightmodel/position/P")          # deg/s
+        self.dr_psi = xp.findDataRef("sim/flightmodel/position/psi")        # deg
+        self.dr_r   = xp.findDataRef("sim/flightmodel/position/R")          # deg/s
+        self.dr_alt = xp.findDataRef("sim/flightmodel/position/elevation")  # meters
+        self.dr_vv  = xp.findDataRef("sim/flightmodel/position/vh_ind")     # m/s
+        self.dr_ias = xp.findDataRef("sim/flightmodel/position/indicated_airspeed")  # kias
 
         # ---- Control Input DataRefs (yoke ratios) ----
-        self.dr_yoke_roll   = xp.findDataRef("sim/joystick/yoke_roll_ratio")     # [-1..1] :contentReference[oaicite:11]{index=11}
-        self.dr_yoke_pitch  = xp.findDataRef("sim/joystick/yoke_pitch_ratio")    # [-1..1] :contentReference[oaicite:12]{index=12}
-        self.dr_yoke_yaw    = xp.findDataRef("sim/joystick/yoke_heading_ratio")  # [-1..1] :contentReference[oaicite:13]{index=13}
+        self.dr_yoke_roll   = xp.findDataRef("sim/joystick/yoke_roll_ratio")     # [-1..1]
+        self.dr_yoke_pitch  = xp.findDataRef("sim/joystick/yoke_pitch_ratio")    # [-1..1]
+        self.dr_yoke_yaw    = xp.findDataRef("sim/joystick/yoke_heading_ratio")  # [-1..1]
 
-        # ---- Overrides (so our yoke ratios actually drive the sim) ----
-        self.dr_ovr_roll  = xp.findDataRef("sim/operation/override/override_joystick_roll")    # bool :contentReference[oaicite:14]{index=14}
-        self.dr_ovr_pitch = xp.findDataRef("sim/operation/override/override_joystick_pitch")   # bool :contentReference[oaicite:15]{index=15}
-        self.dr_ovr_yaw   = xp.findDataRef("sim/operation/override/override_joystick_heading") # bool :contentReference[oaicite:16]{index=16}
+        # ---- Overrides ----
+        self.dr_ovr_roll  = xp.findDataRef("sim/operation/override/override_joystick_roll")    # int/bool
+        self.dr_ovr_pitch = xp.findDataRef("sim/operation/override/override_joystick_pitch")   # int/bool
+        self.dr_ovr_yaw   = xp.findDataRef("sim/operation/override/override_joystick_heading") # int/bool
 
-        # Command state
-        self.cmd_enable = 0
+        # ---- State ----
+        self.cmd_enable = 0          # latched enable
+        self.prev_enable = 0
         self.cmd_roll = 0.0
         self.cmd_pitch = 0.0
         self.cmd_yaw = 0.0
+
         self.last_cmd_t = 0.0
-        self.cmd_timeout_s = 0.5  # safety: if commands stop, release override
+        self.cmd_timeout_s = 0.5
+        self.timeout_to_neutral = True   # key feature: stay enabled, go neutral if packets stop
 
         # Flightloop
         self.flightloop_id = xp.createFlightLoop(
@@ -98,7 +101,7 @@ class PythonInterface:
         xp.setDataf(self.dr_yoke_yaw,   float(self.cmd_yaw))
 
     def _release_controls(self):
-        # Neutralize commands
+        # Neutralize yoke ratios
         try:
             xp.setDataf(self.dr_yoke_roll,  0.0)
             xp.setDataf(self.dr_yoke_pitch, 0.0)
@@ -106,7 +109,7 @@ class PythonInterface:
         except:
             pass
 
-        # Release overrides (return control to user)
+        # Release overrides (return control to mouse/user)
         try:
             xp.setDatai(self.dr_ovr_roll,  0)
             xp.setDatai(self.dr_ovr_pitch, 0)
@@ -115,8 +118,7 @@ class PythonInterface:
             pass
 
     def _poll_commands(self):
-        # Drain UDP socket (keep last packet)
-        got = False
+        got_any = False
         while True:
             try:
                 data, addr = self.sock_rx.recvfrom(4096)
@@ -128,16 +130,21 @@ class PythonInterface:
             except Exception:
                 continue
 
-            # expected keys: enable, roll, pitch, yaw
-            if "enable" in msg: self.cmd_enable = int(msg["enable"])
-            if "roll" in msg:   self.cmd_roll = clamp(float(msg["roll"]))
+            # enable is latched
+            if "enable" in msg:
+                new_en = int(msg["enable"])
+                if new_en != self.cmd_enable:
+                    xp.sys_log(f"[UDPBridge] cmd_enable -> {new_en}")
+                self.cmd_enable = new_en
+
+            if "roll" in msg:   self.cmd_roll  = clamp(float(msg["roll"]))
             if "pitch" in msg:  self.cmd_pitch = clamp(float(msg["pitch"]))
-            if "yaw" in msg:    self.cmd_yaw = clamp(float(msg["yaw"]))
+            if "yaw" in msg:    self.cmd_yaw   = clamp(float(msg["yaw"]))
 
             self.last_cmd_t = time.time()
-            got = True
+            got_any = True
 
-        return got
+        return got_any
 
     # ----- Main loop -----
     def _cb(self, *_args):
@@ -146,20 +153,25 @@ class PythonInterface:
         # 1) command handling
         self._poll_commands()
 
-        # safety timeout: if enabled but no commands recently, release controls
+        # timeout behavior: if enabled but no commands recently -> go neutral but stay enabled
         if self.cmd_enable == 1 and (now - self.last_cmd_t) > self.cmd_timeout_s:
-            xp.sys_log("[UDPBridge] Command timeout -> releasing controls")
-            self.cmd_enable = 0
-            self._release_controls()
+            if self.timeout_to_neutral:
+                self.cmd_roll = 0.0
+                self.cmd_pitch = 0.0
+                self.cmd_yaw = 0.0
+            else:
+                self.cmd_enable = 0
 
+        # Apply or release based on enable (release only on transition)
         if self.cmd_enable == 1:
             self._apply_controls()
         else:
-            # don’t constantly force neutral if the user is flying;
-            # just ensure overrides are released
-            self._release_controls()
+            if self.prev_enable == 1:
+                self._release_controls()
 
-        # 2) telemetry
+        self.prev_enable = self.cmd_enable
+
+        # 2) telemetry (include both cmd + actual yoke to prove it works)
         try:
             telem = {
                 "t": now,
@@ -170,10 +182,16 @@ class PythonInterface:
                 "alt_m": float(xp.getDataf(self.dr_alt)),
                 "vv_m_s": float(xp.getDataf(self.dr_vv)),
                 "ias_kts": float(xp.getDataf(self.dr_ias)),
+
                 "cmd_enable": int(self.cmd_enable),
                 "cmd_roll": float(self.cmd_roll),
                 "cmd_pitch": float(self.cmd_pitch),
                 "cmd_yaw": float(self.cmd_yaw),
+
+                # actual yoke ratios (what X-Plane currently has)
+                "yoke_roll": float(xp.getDataf(self.dr_yoke_roll)),
+                "yoke_pitch": float(xp.getDataf(self.dr_yoke_pitch)),
+                "yoke_yaw": float(xp.getDataf(self.dr_yoke_yaw)),
             }
             self.sock_tx.sendto(json.dumps(telem).encode("utf-8"), self.dest)
         except Exception as e:

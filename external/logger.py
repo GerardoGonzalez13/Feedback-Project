@@ -92,5 +92,38 @@ def main():
 
     print(f"[logger] wrote {len(rows)} rows -> {out_path}")
 
+    # Auto-plot latest run
+try:
+    import matplotlib.pyplot as plt
+    import math
+
+    def m2ft(x): return x * 3.28084
+
+    t = [row["t"] for row in rows]
+    t0 = float(t[0])
+    t = [float(x) - t0 for x in t]
+
+    phi = [float(row.get("phi_deg", 0.0)) for row in rows]
+    alt_ft = [m2ft(float(row.get("alt_m", 0.0))) for row in rows]
+
+    plt.figure()
+    plt.plot(t, phi)
+    plt.xlabel("time (s)")
+    plt.ylabel("bank angle phi (deg)")
+    plt.grid(True)
+    plt.title("Bank angle")
+
+    plt.figure()
+    plt.plot(t, alt_ft)
+    plt.xlabel("time (s)")
+    plt.ylabel("altitude (ft)")
+    plt.grid(True)
+    plt.title("Altitude")
+
+    plt.savefig("data/figures/bank_angle.png", dpi=200)
+    plt.close()
+except Exception as e:
+    print(f"[logger] plot skipped: {e}")
+
 if __name__ == "__main__":
     main()
