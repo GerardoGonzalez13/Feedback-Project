@@ -26,10 +26,10 @@ def main():
 
     # 1) Roll-in (open-loop first pass)
     # Tune these numbers to hit ~60 deg bank on the King Air
-    hold(sock, 3.0, enable=1, roll=0.35, pitch=0.0, yaw=0.0)
+    hold(sock, 2.0, enable=1, roll=0.22, pitch=0.0, yaw=0.0)
 
     # 2) Hold-ish near bank angle
-    hold(sock, 2.0, enable=1, roll=0.10, pitch=0.0, yaw=0.0)
+    hold(sock, 2.0, enable=1, roll=0.05, pitch=0.0, yaw=0.0)
 
     # 3) Rudder pulse while holding bank
     hold(sock, 0.4, enable=1, roll=0.10, pitch=0.0, yaw=0.20)

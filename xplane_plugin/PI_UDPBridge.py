@@ -38,6 +38,8 @@ class PythonInterface:
         self.dr_alt = xp.findDataRef("sim/flightmodel/position/elevation")  # meters
         self.dr_vv  = xp.findDataRef("sim/flightmodel/position/vh_ind")     # m/s
         self.dr_ias = xp.findDataRef("sim/flightmodel/position/indicated_airspeed")  # kias
+        self.dr_theta = xp.findDataRef("sim/flightmodel/position/theta")  # pitch angle (deg)
+        self.dr_q     = xp.findDataRef("sim/flightmodel/position/Q")      # pitch rate (deg/s)
 
         # ---- Control Input DataRefs (yoke ratios) ----
         self.dr_yoke_roll   = xp.findDataRef("sim/joystick/yoke_roll_ratio")     # [-1..1]
@@ -182,6 +184,8 @@ class PythonInterface:
                 "alt_m": float(xp.getDataf(self.dr_alt)),
                 "vv_m_s": float(xp.getDataf(self.dr_vv)),
                 "ias_kts": float(xp.getDataf(self.dr_ias)),
+                "theta_deg": float(xp.getDataf(self.dr_theta)),
+                "q_deg_s":   float(xp.getDataf(self.dr_q)),
 
                 "cmd_enable": int(self.cmd_enable),
                 "cmd_roll": float(self.cmd_roll),
