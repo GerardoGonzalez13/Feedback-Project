@@ -1,59 +1,67 @@
-import csv
-import math
+from analysis_utils import (
+    compute_metrics,
+    detect_events,
+    load_run,
+    write_summary_outputs,
+)
 
-def rad2deg(x): return x * 180.0 / math.pi
-def m2ft(x): return x * 3.28084
 
-def load(path):
-    with open(path, "r") as f:
-        r = csv.DictReader(f)
-        rows = list(r)
-    t = [float(x["t"]) for x in rows]
-    phi = [float(x["phi_deg"]) for x in rows]
-    alt = [m2ft(float(x["alt_m"])) for x in rows]
-    return t, phi, alt
+EVENT_LABELS = {
+    "time_to_60deg_bank": "first reaches ~60 deg bank",
+    "yaw_pulse_start": "yaw pulse start",
+    "yaw_pulse_end": "yaw pulse end",
+    "controller_start": "controller start",
+}
 
-def time_to_wings_level(t, phi, tol_deg=5.0, hold_s=2.0):
-    # first time |phi| stays below tol for hold_s
-    t0 = t[0]
-    t_rel = [x - t0 for x in t]
 
-    for i in range(len(phi)):
-        if abs(phi[i]) <= tol_deg:
-            t_start = t_rel[i]
-            # check forward window
-            j = i
-            while j < len(phi) and (t_rel[j] - t_start) < hold_s:
-                if abs(phi[j]) > tol_deg:
-                    break
-                j += 1
-            else:
-                return t_start
-    return None
+METRIC_LABELS = [
+    ("time_to_60deg_bank", "time_to_60deg_bank (s)"),
+    ("peak_bank_deg", "peak_bank_deg"),
+    ("bank_overshoot_deg", "bank_overshoot_deg"),
+    ("roll_rate_at_60deg", "roll_rate_at_60deg (deg/s)"),
+    ("roll_rate_at_controller_start", "roll_rate_at_controller_start (deg/s)"),
+    ("time_from_controller_start_to_|phi|<10deg", "time_from_controller_start_to_|phi|<10deg (s)"),
+    ("time_from_controller_start_to_|phi|<5deg", "time_from_controller_start_to_|phi|<5deg (s)"),
+    ("time_from_controller_start_to_|p|<1deg_s", "time_from_controller_start_to_|p|<1deg_s (s)"),
+    ("settling_time_phi_to_5deg_hold_2s", "settling_time_phi_to_5deg_hold_2s (s)"),
+    ("phi_rms_10s_after_controller_start", "phi_rms_10s_after_controller_start (deg)"),
+    ("p_rms_10s_after_controller_start", "p_rms_10s_after_controller_start (deg/s)"),
+    ("max_abs_roll_rate_after_controller_start", "max_abs_roll_rate_after_controller_start (deg/s)"),
+    ("min_altitude_after_controller_start_ft", "min_altitude_after_controller_start_ft"),
+    ("max_altitude_deviation_from_controller_start_ft", "max_altitude_deviation_from_controller_start_ft"),
+    ("net_altitude_change_from_controller_start_to_end_ft", "net_altitude_change_from_controller_start_to_end_ft"),
+]
 
-def rms(vals):
-    return math.sqrt(sum(v*v for v in vals) / max(1, len(vals)))
+
+def fmt(value):
+    if isinstance(value, float):
+        return f"{value:.3f}"
+    return str(value)
+
 
 def main(path):
-    t, phi, alt = load(path)
-    t0 = t[0]
-    t_rel = [x - t0 for x in t]
-
-    t_wl = time_to_wings_level(t, phi, tol_deg=5.0, hold_s=2.0)
-
-    # RMS phi over 5-20s
-    window = [phi[i] for i in range(len(phi)) if 5.0 <= t_rel[i] <= 20.0]
-    phi_rms = rms(window) if window else None
-
-    alt_loss = alt[0] - alt[-1]
+    run = load_run(path)
+    events = detect_events(run)
+    metrics = compute_metrics(run, events)
+    json_path, csv_path = write_summary_outputs(metrics)
 
     print(f"file: {path}")
-    print(f"time_to_|phi|<5deg (hold 2s): {t_wl}")
-    print(f"phi_rms_5to20s (deg): {phi_rms}")
-    print(f"alt_loss (ft, start-end): {alt_loss:.1f}")
+    print("events:")
+    for key, label in EVENT_LABELS.items():
+        value = events.get(key)
+        print(f"  {label}: {fmt(value) if value is not None else 'NOT_FOUND'}")
+
+    print("metrics:")
+    for key, label in METRIC_LABELS:
+        print(f"  {label}: {fmt(metrics[key])}")
+
+    print(f"summary_json: {json_path}")
+    print(f"summary_csv: {csv_path}")
+
 
 if __name__ == "__main__":
     import sys
+
     if len(sys.argv) != 2:
         print("usage: python external/metrics.py data/runs/run_XXXX.csv")
         raise SystemExit(2)
