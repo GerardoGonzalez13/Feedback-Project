@@ -1,17 +1,111 @@
 import csv
 import json
+import math
 import socket
 import time
 from pathlib import Path
 
-# --- CONFIG ---
+
 LISTEN_IP = "0.0.0.0"
 PORT = 49005
 RUNS_DIR = Path("data/runs")
-# -------------
 
-def m2ft(x): return x * 3.28084
-def ms2fpm(x): return x * 196.850394
+STABLE_COLUMNS = [
+    "t",
+    "phi_deg",
+    "p_deg_s",
+    "beta_deg",
+    "r_deg_s",
+    "theta_deg",
+    "q_deg_s",
+    "psi_deg",
+    "alt_m",
+    "alt_ft",
+    "ias_kts",
+    "vv_m_s",
+    "cmd_enable",
+    "cmd_roll",
+    "cmd_pitch",
+    "cmd_yaw",
+    "yoke_roll",
+    "yoke_pitch",
+    "yoke_yaw",
+]
+
+
+def m2ft(x):
+    return x * 3.28084
+
+
+def ms2fpm(x):
+    return x * 196.850394
+
+
+def as_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def ordered_fieldnames(rows):
+    seen = {key for row in rows for key in row.keys()}
+    ordered = list(STABLE_COLUMNS)
+    extras = sorted(seen.difference(ordered))
+    return ordered + extras
+
+
+def normalize_row(msg):
+    row = dict(msg)
+    alt_m = as_float(row.get("alt_m"))
+    if alt_m is not None and "alt_ft" not in row and "altitude_ft" not in row:
+        row["alt_ft"] = m2ft(alt_m)
+    return row
+
+
+def print_status(msg, packets, addr):
+    phi = as_float(msg.get("phi_deg"))
+    p = as_float(msg.get("p_deg_s"))
+    beta = as_float(msg.get("beta_deg"))
+    r = as_float(msg.get("r_deg_s"))
+    alt_m = as_float(msg.get("alt_m"))
+    ias = as_float(msg.get("ias_kts"))
+    vv = as_float(msg.get("vv_m_s"))
+    cmd_enable = msg.get("cmd_enable")
+    cmd_roll = as_float(msg.get("cmd_roll"))
+    cmd_pitch = as_float(msg.get("cmd_pitch"))
+    cmd_yaw = as_float(msg.get("cmd_yaw"))
+
+    if phi is None:
+        print(f"[logger] packets={packets} keys={list(msg.keys())} last_from={addr}")
+        return
+
+    alt_ft = m2ft(alt_m) if alt_m is not None else None
+    vv_fpm = ms2fpm(vv) if vv is not None else None
+    beta_text = f"{beta:7.2f}" if beta is not None and math.isfinite(beta) else "   n/a "
+    p_text = f"{p:7.2f}" if p is not None and math.isfinite(p) else "   n/a "
+    r_text = f"{r:7.2f}" if r is not None and math.isfinite(r) else "   n/a "
+    alt_text = f"{alt_ft:8.1f}" if alt_ft is not None else "    n/a "
+    ias_text = f"{ias:6.1f}" if ias is not None else "  n/a "
+    vv_text = f"{vv_fpm:7.0f}" if vv_fpm is not None else "   n/a "
+    roll_text = f"{cmd_roll:+.3f}" if cmd_roll is not None else "n/a"
+    pitch_text = f"{cmd_pitch:+.3f}" if cmd_pitch is not None else "n/a"
+    yaw_text = f"{cmd_yaw:+.3f}" if cmd_yaw is not None else "n/a"
+
+    print(
+        f"[logger] packets={packets} "
+        f"phi={phi:7.2f} deg "
+        f"p={p_text} deg/s "
+        f"beta={beta_text} deg "
+        f"r={r_text} deg/s "
+        f"alt={alt_text} ft "
+        f"ias={ias_text} kt "
+        f"vv={vv_text} fpm "
+        f"cmd_en={cmd_enable} "
+        f"roll_cmd={roll_text} pitch_cmd={pitch_text} yaw_cmd={yaw_text} "
+        f"from={addr}"
+    )
+
 
 def main():
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
@@ -26,14 +120,12 @@ def main():
 
     rows = []
     last_print = 0.0
-    t0 = time.time()
 
     try:
         while True:
             try:
                 data, addr = sock.recvfrom(65535)
             except socket.timeout:
-                # if we got nothing for a while, just keep waiting
                 continue
 
             try:
@@ -41,39 +133,13 @@ def main():
             except Exception:
                 continue
 
-            rows.append(msg)
+            row = normalize_row(msg)
+            rows.append(row)
 
             now = time.time()
             if now - last_print >= 1.0:
                 last_print = now
-
-                # pull values safely
-                phi = msg.get("phi_deg", None)
-                alt_m = msg.get("alt_m", None)
-                ias = msg.get("ias_kts", None)
-                vv = msg.get("vv_m_s", None)
-
-                # command state (optional)
-                en = msg.get("cmd_enable", None)
-                cr = msg.get("cmd_roll", None)
-                cy = msg.get("cmd_yaw", None)
-
-                if phi is None:
-                    print(f"[logger] packets={len(rows)} keys={list(msg.keys())} last_from={addr}")
-                else:
-                    alt_ft = m2ft(alt_m) if alt_m is not None else None
-                    vv_fpm = ms2fpm(vv) if vv is not None else None
-
-                    print(
-                        f"[logger] packets={len(rows)} "
-                        f"phi={phi:7.2f} deg "
-                        f"alt={alt_ft:8.1f} ft "
-                        f"ias={ias:6.1f} kt "
-                        f"vv={vv_fpm:7.0f} fpm "
-                        f"cmd_en={en} roll_cmd={cr} yaw_cmd={cy} "
-                        f"from={addr}"
-                    )
-
+                print_status(row, len(rows), addr)
     except KeyboardInterrupt:
         pass
     finally:
@@ -83,47 +149,14 @@ def main():
         print("[logger] No data captured; nothing to write.")
         return
 
-    # write CSV with stable columns
-    keys = sorted({k for row in rows for k in row.keys()})
-    with open(out_path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=keys)
-        w.writeheader()
-        w.writerows(rows)
+    fieldnames = ordered_fieldnames(rows)
+    with out_path.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
     print(f"[logger] wrote {len(rows)} rows -> {out_path}")
 
-    # Auto-plot latest run
-try:
-    import matplotlib.pyplot as plt
-    import math
-
-    def m2ft(x): return x * 3.28084
-
-    t = [row["t"] for row in rows]
-    t0 = float(t[0])
-    t = [float(x) - t0 for x in t]
-
-    phi = [float(row.get("phi_deg", 0.0)) for row in rows]
-    alt_ft = [m2ft(float(row.get("alt_m", 0.0))) for row in rows]
-
-    plt.figure()
-    plt.plot(t, phi)
-    plt.xlabel("time (s)")
-    plt.ylabel("bank angle phi (deg)")
-    plt.grid(True)
-    plt.title("Bank angle")
-
-    plt.figure()
-    plt.plot(t, alt_ft)
-    plt.xlabel("time (s)")
-    plt.ylabel("altitude (ft)")
-    plt.grid(True)
-    plt.title("Altitude")
-
-    plt.savefig("data/figures/bank_angle.png", dpi=200)
-    plt.close()
-except Exception as e:
-    print(f"[logger] plot skipped: {e}")
 
 if __name__ == "__main__":
     main()

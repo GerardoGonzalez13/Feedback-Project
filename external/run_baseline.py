@@ -7,6 +7,24 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, Any
 
+from run_controlled import (
+    TARGET_BANK_DEG as CONTROLLED_TARGET_BANK_DEG,
+    BANK_CAPTURE_MIN_DEG,
+    BANK_CAPTURE_MAX_DEG,
+    BANK_CAPTURE_MAX_P_DEG_S,
+    BANK_CAPTURE_DWELL_S,
+    BANK_CAPTURE_TIMEOUT_S,
+    K_TO_TARGET,
+    P_DAMP,
+    UMAX_TO_TARGET,
+    CAPTURE_MODE_START_DEG,
+    CAPTURE_K_TO_TARGET,
+    CAPTURE_P_DAMP,
+    CAPTURE_UMAX,
+    MAX_ROLL_CMD_STEP_CAPTURE,
+    capture_condition_met,
+)
+
 # =========================
 # Network / X-Plane bridge
 # =========================
@@ -21,39 +39,9 @@ DT = 1.0 / RATE_HZ
 # =========================
 # Baseline maneuver settings
 # =========================
-TARGET_BANK_DEG = 60.0
-# Practical capture thresholds for the baseline maneuver. These are intended
-# to confirm a usable, settled bank capture before the yaw pulse, not to act
-# as ultra-tight controller-performance metrics.
-BANK_TOL_DEG = 3.0
-ROLLRATE_STABLE_THRESH = 1.0     # deg/s
-STABLE_HOLD_TIME = 0.3           # must remain near target this long before yaw pulse
-ROLLRATE_PULSE_THRESH = 1.0      # deg/s
-CAPTURE_GRACE_TIME = 0.75        # allow extra time to complete dwell if we are already near capture
-BANK_RESET_TOL_DEG = 3.5         # relaxed reset threshold to avoid one-sample timer resets
-ROLLRATE_RESET_THRESH = 1.2      # relaxed reset threshold to avoid one-sample timer resets
-
-MAX_ENTRY_TIME = 20.0            # seconds allowed to get to target bank
-RUDDER_PULSE_TIME = 0.4          # seconds
-POST_PULSE_HOLD_TIME = 0.6       # keep bank stabilized briefly after pulse
-OBS_WINDOW_AFTER_BANK60_S = 20.0 # keep logging this long after first reaching ~60 deg bank
-
-# Roll-command schedule / damping
-MAX_ROLL_CMD = 0.18              # reduce authority to lower overshoot into capture
-KP_BANK = 0.018                  # command per degree of bank error
-KD_P = 0.040                     # stronger roll-rate damping so p is arrested sooner
-CAPTURE_MODE_BANK_DEG = 55.0
-TARGET_WINDOW_DEG = 2.0
-KP_CAPTURE = 0.010               # keep some bank-error correction in capture mode
-KD_P_CAPTURE = 0.070             # prioritize killing roll rate near 60 deg
-MAX_CAPTURE_CMD_STEP = 0.015     # limit per-cycle command change near capture
-MAX_CAPTURE_ROLL_CMD = 0.12      # softer authority near the target to avoid spikes
-KD_P_CAPTURE_NEAR = 0.090        # extra damping once we are in the final target window
-TARGET_WINDOW_BRAKE_CMD = 0.020  # small smooth braking bias while positive p remains
-KP_CAPTURE_OUTSIDE = 0.020       # pull bank angle back more decisively when outside 58-62 deg
-MAX_CAPTURE_ROLL_CMD_OUTSIDE = 0.15
-MIN_TARGET_WINDOW_BRAKE = 0.035  # keep a small steady brake while positive p remains near target
-TARGET_WINDOW_HOLD_BRAKE = 0.045 # hold a slightly stronger brake until the final settle is complete
+TARGET_BANK_DEG = CONTROLLED_TARGET_BANK_DEG
+MAX_ENTRY_TIME = BANK_CAPTURE_TIMEOUT_S
+OBS_WINDOW_AFTER_BANK60_S = 20.0
 
 # Optional mild pitch help during entry/hold so altitude does not get destroyed
 # This is NOT a real altitude controller, just enough to stop the worst of the drop.
@@ -61,9 +49,6 @@ USE_MILD_PITCH_SUPPORT = True
 MAX_PITCH_CMD = 0.08
 KH_ALT = 0.0010                  # pitch command per foot altitude error
 KV_VS = 0.010                    # pitch command per m/s vertical speed damping
-
-# Rudder pulse
-YAW_PULSE_CMD = 0.20
 
 # Safety / completion
 FINAL_NEUTRAL_TIME = 0.5         # send neutral briefly before releasing override
@@ -76,6 +61,11 @@ def clamp(x: float, lo: float, hi: float) -> float:
 def smoothstep01(x: float) -> float:
     x = clamp(x, 0.0, 1.0)
     return x * x * (3.0 - 2.0 * x)
+
+
+def rate_limit(new_cmd: float, prev_cmd: float, max_step: float) -> float:
+    delta = clamp(new_cmd - prev_cmd, -max_step, max_step)
+    return prev_cmd + delta
 
 
 class XPlaneBaselineRunner:
@@ -181,74 +171,15 @@ class XPlaneBaselineRunner:
     def bank_hold_roll_cmd(self, state: Dict[str, Any], target_bank_deg: float) -> float:
         phi = float(state["phi_deg"])
         p = float(state["p_deg_s"])
-
         bank_err = target_bank_deg - phi
-        cmd = KP_BANK * bank_err - KD_P * p
+        if phi < CAPTURE_MODE_START_DEG:
+            raw_roll_cmd = (K_TO_TARGET * bank_err) - (P_DAMP * p)
+            raw_roll_cmd = clamp(raw_roll_cmd, -UMAX_TO_TARGET, UMAX_TO_TARGET)
+        else:
+            raw_roll_cmd = (CAPTURE_K_TO_TARGET * bank_err) - (CAPTURE_P_DAMP * p)
+            raw_roll_cmd = clamp(raw_roll_cmd, -CAPTURE_UMAX, CAPTURE_UMAX)
 
-        # Start tapering earlier so the entry command fades before we drift
-        # through 60 deg with substantial positive roll rate.
-        abs_err = abs(bank_err)
-        if abs_err < 25.0:
-            cmd *= 0.80
-        if abs_err < 15.0:
-            cmd *= 0.65
-        if abs_err < 8.0:
-            cmd *= 0.50
-
-        # Capture mode: as we approach 60 deg, blend away from entry behavior
-        # and toward a smoother roll-rate arrest law.
-        if phi >= CAPTURE_MODE_BANK_DEG:
-            capture_blend = smoothstep01((phi - CAPTURE_MODE_BANK_DEG) / (target_bank_deg - CAPTURE_MODE_BANK_DEG))
-            kd_capture = KD_P_CAPTURE
-            kp_capture = KP_CAPTURE
-            capture_roll_limit = MAX_CAPTURE_ROLL_CMD
-            if abs(bank_err) <= TARGET_WINDOW_DEG:
-                kd_capture = KD_P_CAPTURE_NEAR
-            else:
-                kp_capture = KP_CAPTURE_OUTSIDE
-                capture_roll_limit = MAX_CAPTURE_ROLL_CMD_OUTSIDE
-
-            raw_capture_cmd = kp_capture * bank_err - kd_capture * p
-
-            # In the final 58-62 deg window, keep a small braking bias while
-            # p is still positive so the controller does not release too early
-            # and let roll rate creep back up.
-            if abs(bank_err) <= TARGET_WINDOW_DEG and p > ROLLRATE_PULSE_THRESH:
-                positive_p_blend = smoothstep01(
-                    (p - ROLLRATE_PULSE_THRESH) / (1.5 - ROLLRATE_PULSE_THRESH)
-                )
-                raw_capture_cmd -= TARGET_WINDOW_BRAKE_CMD * positive_p_blend
-
-            # In the final target window, taper more gently and keep a small
-            # negative hold command while p is still positive so the aircraft
-            # does not re-accelerate in roll before the gate is satisfied.
-            if abs(bank_err) <= TARGET_WINDOW_DEG and abs(p) < 0.8:
-                raw_capture_cmd *= 0.85
-            if abs(bank_err) <= TARGET_WINDOW_DEG and abs(p) < 0.35:
-                raw_capture_cmd *= 0.75
-            if abs(bank_err) <= TARGET_WINDOW_DEG and 0.25 < p < 0.8:
-                raw_capture_cmd = min(raw_capture_cmd, -TARGET_WINDOW_HOLD_BRAKE)
-            elif abs(bank_err) <= TARGET_WINDOW_DEG and 0.0 < p <= 0.25:
-                raw_capture_cmd = min(raw_capture_cmd, -MIN_TARGET_WINDOW_BRAKE)
-
-            raw_capture_cmd = clamp(raw_capture_cmd, -capture_roll_limit, capture_roll_limit)
-
-            # Blend smoothly from the tapered entry command into the capture
-            # command so the handoff above 55 deg does not create a kink.
-            blended_capture_cmd = (1.0 - capture_blend) * cmd + capture_blend * raw_capture_cmd
-
-            # Rate-limit the command in capture mode to prevent abrupt sign
-            # flips and the large one-step negative correction seen near target.
-            delta = clamp(
-                blended_capture_cmd - self.last_roll_cmd,
-                -MAX_CAPTURE_CMD_STEP,
-                MAX_CAPTURE_CMD_STEP,
-            )
-            cmd = self.last_roll_cmd + delta
-
-            return clamp(cmd, -capture_roll_limit, capture_roll_limit)
-
-        return clamp(cmd, -MAX_ROLL_CMD, MAX_ROLL_CMD)
+        return rate_limit(raw_roll_cmd, self.last_roll_cmd, MAX_ROLL_CMD_STEP_CAPTURE)
 
     def hold_fixed_cmd(self, duration_s: float, enable: int, roll: float, pitch: float, yaw: float) -> None:
         t_end = time.time() + duration_s
@@ -260,17 +191,13 @@ class XPlaneBaselineRunner:
         self.phase = "acquire_bank"
         print(f"[baseline] Acquiring target bank: {target_bank_deg:.1f} deg")
         t_start = time.time()
-        t_deadline = t_start + MAX_ENTRY_TIME
-        stable_start = None
+        capture_candidate_start = None
         last_state = None
-        in_grace_period = False
 
-        while True:
+        while time.time() - t_start < MAX_ENTRY_TIME:
             state = self.recv_state()
             if state is None:
-                # Keep previous command cadence alive even if telemetry blips
-                if time.time() >= t_deadline:
-                    break
+                self.send_cmd(enable=1, roll=0.0, pitch=0.0, yaw=0.0)
                 time.sleep(DT)
                 continue
 
@@ -278,92 +205,50 @@ class XPlaneBaselineRunner:
             phi = float(state["phi_deg"])
             p = float(state["p_deg_s"])
             now = time.time()
+            elapsed_s = now - t_start
 
             roll_cmd = self.bank_hold_roll_cmd(state, target_bank_deg)
             pitch_cmd = self.mild_pitch_support(state, alt_ref_ft)
 
             self.send_cmd(enable=1, roll=roll_cmd, pitch=pitch_cmd, yaw=0.0)
 
-            near_bank = abs(phi - target_bank_deg) <= BANK_TOL_DEG
-            low_rollrate = abs(p) <= ROLLRATE_PULSE_THRESH
-            hard_out_of_window = (
-                abs(phi - target_bank_deg) > BANK_RESET_TOL_DEG
-                or abs(p) > ROLLRATE_RESET_THRESH
-            )
+            if capture_condition_met(phi, p):
+                if capture_candidate_start is None:
+                    capture_candidate_start = now
+            else:
+                capture_candidate_start = None
 
-            if self.first_bank60_time is None and near_bank:
+            if capture_candidate_start is not None and (now - capture_candidate_start) >= BANK_CAPTURE_DWELL_S:
                 self.first_bank60_time = now
                 print(
-                    f"[baseline] First reached ~60 deg bank at +{self.first_bank60_time - t_start:.2f}s "
-                    f"(phi={phi:.2f} deg, p={p:.2f} deg/s)"
+                    f"[baseline] Handoff triggered: status=clean_capture "
+                    f"t={elapsed_s:.2f}s phi={phi:.2f} deg p={p:.2f} deg/s"
                 )
-
-            if near_bank and low_rollrate:
-                if stable_start is None:
-                    stable_start = now
-                elif now - stable_start >= STABLE_HOLD_TIME:
-                    print(f"[baseline] Target bank acquired: phi={phi:.2f} deg, p={p:.2f} deg/s")
-                    return state
-            elif hard_out_of_window:
-                stable_start = None
-
-            if now >= t_deadline:
-                if stable_start is not None and not in_grace_period:
-                    t_deadline = now + CAPTURE_GRACE_TIME
-                    in_grace_period = True
-                else:
-                    break
+                return state
 
             time.sleep(DT)
 
         if last_state is None:
+            print(
+                f"[baseline] Handoff triggered: status=capture_failed "
+                f"t={MAX_ENTRY_TIME:.2f}s phi=nan deg p=nan deg/s"
+            )
             raise RuntimeError("Timed out acquiring target bank and telemetry was lost.")
 
         last_phi = float(last_state["phi_deg"])
         last_p = float(last_state["p_deg_s"])
-        if self.first_bank60_time is None and abs(last_phi - target_bank_deg) <= BANK_TOL_DEG:
-            self.first_bank60_time = time.time()
-            print(
-                f"[baseline] First reached ~60 deg bank on final capture sample "
-                f"(phi={last_phi:.2f} deg, p={last_p:.2f} deg/s)"
-            )
-        if abs(last_phi - target_bank_deg) <= BANK_TOL_DEG and abs(last_p) <= ROLLRATE_PULSE_THRESH:
-            print(f"[baseline] Target bank accepted on final state: phi={last_phi:.2f} deg, p={last_p:.2f} deg/s")
-            return last_state
-
-        raise RuntimeError(
-            f"Timed out acquiring target bank. Last state: "
-            f"phi={last_state.get('phi_deg')}, p={last_state.get('p_deg_s')}"
+        elapsed_s = time.time() - t_start
+        print(
+            f"[baseline] Handoff triggered: status=capture_failed "
+            f"t={elapsed_s:.2f}s phi={last_phi:.2f} deg p={last_p:.2f} deg/s"
         )
-
-    def pulse_rudder_while_holding_bank(self, target_bank_deg: float, alt_ref_ft: float) -> None:
-        self.phase = "yaw_pulse"
-        print(f"[baseline] Applying yaw pulse: {YAW_PULSE_CMD:.2f} for {RUDDER_PULSE_TIME:.2f}s")
-        t_end = time.time() + RUDDER_PULSE_TIME
-        while time.time() < t_end:
-            state = self.recv_state()
-            if state is None:
-                time.sleep(DT)
-                continue
-
-            roll_cmd = self.bank_hold_roll_cmd(state, target_bank_deg)
-            pitch_cmd = self.mild_pitch_support(state, alt_ref_ft)
-            self.send_cmd(enable=1, roll=roll_cmd, pitch=pitch_cmd, yaw=YAW_PULSE_CMD)
-            time.sleep(DT)
-
-        self.phase = "post_pulse_hold"
-        print(f"[baseline] Brief post-pulse bank hold: {POST_PULSE_HOLD_TIME:.2f}s")
-        t_end = time.time() + POST_PULSE_HOLD_TIME
-        while time.time() < t_end:
-            state = self.recv_state()
-            if state is None:
-                time.sleep(DT)
-                continue
-
-            roll_cmd = self.bank_hold_roll_cmd(state, target_bank_deg)
-            pitch_cmd = self.mild_pitch_support(state, alt_ref_ft)
-            self.send_cmd(enable=1, roll=roll_cmd, pitch=pitch_cmd, yaw=0.0)
-            time.sleep(DT)
+        raise RuntimeError(
+            "Stage 1 failed to achieve clean capture before timeout. "
+            f"Required phi in [{BANK_CAPTURE_MIN_DEG:.1f}, {BANK_CAPTURE_MAX_DEG:.1f}] deg, "
+            f"|p| <= {BANK_CAPTURE_MAX_P_DEG_S:.1f} deg/s, held for {BANK_CAPTURE_DWELL_S:.1f} s "
+            f"within {MAX_ENTRY_TIME:.1f} s. "
+            f"Final state at timeout: phi={last_phi:.2f} deg, p={last_p:.2f} deg/s."
+        )
 
     def neutral_observation_window_until(self, end_time_s: float) -> None:
         self.phase = "neutral_observation"
@@ -392,25 +277,23 @@ class XPlaneBaselineRunner:
             print("[baseline] Settling at neutral with override ON")
             self.hold_fixed_cmd(duration_s=1.0, enable=1, roll=0.0, pitch=0.0, yaw=0.0)
 
-            # 1) Acquire ~60 deg bank using telemetry-based entry logic.
+            # 1) Acquire ~60 deg bank using the same Stage 1 roll-in / clean
+            # capture logic as the controlled run.
             self.acquire_target_bank(target_bank_deg=TARGET_BANK_DEG, alt_ref_ft=alt_ref_ft)
 
-            # 2) Apply rudder pulse only once target bank is actually reached.
-            self.pulse_rudder_while_holding_bank(target_bank_deg=TARGET_BANK_DEG, alt_ref_ft=alt_ref_ft)
-
-            # 3) Baseline window: once ~60 deg bank is first reached, keep
-            # logging neutral-command response for a fixed post-bank window.
+            # 2) Baseline window: once clean capture is achieved, switch
+            # immediately to neutral-command observation.
             if self.first_bank60_time is None:
                 self.first_bank60_time = time.time()
-                print("[baseline] WARNING: bank-60 event was not captured explicitly; using current time.")
+                print("[baseline] WARNING: clean-capture event was not captured explicitly; using current time.")
             obs_end_time = self.first_bank60_time + OBS_WINDOW_AFTER_BANK60_S
             print(
                 f"[baseline] Post-bank observation window: {OBS_WINDOW_AFTER_BANK60_S:.1f}s "
-                "after first reaching ~60 deg bank"
+                "after clean capture"
             )
             self.neutral_observation_window_until(end_time_s=obs_end_time)
 
-            # 4) Brief neutral flush, then release override.
+            # 3) Brief neutral flush, then release override.
             self.phase = "release"
             print("[baseline] Finishing run, releasing control")
             self.hold_fixed_cmd(duration_s=FINAL_NEUTRAL_TIME, enable=1, roll=0.0, pitch=0.0, yaw=0.0)

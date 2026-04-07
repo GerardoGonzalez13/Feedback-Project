@@ -13,6 +13,14 @@ HZ = 50
 def clamp(x, lo=-1.0, hi=1.0):
     return max(lo, min(hi, x))
 
+
+def first_dataref(candidates):
+    for name in candidates:
+        dr = xp.findDataRef(name)
+        if dr:
+            return dr, name
+    return None, None
+
 class PythonInterface:
     def XPluginStart(self):
         self.Name = "UDPBridge"
@@ -33,6 +41,10 @@ class PythonInterface:
         # ---- Telemetry DataRefs (units per DataRefs.txt) ----
         self.dr_phi = xp.findDataRef("sim/flightmodel/position/phi")        # deg
         self.dr_p   = xp.findDataRef("sim/flightmodel/position/P")          # deg/s
+        self.dr_beta, self.dr_beta_name = first_dataref([
+            "sim/flightmodel/position/beta",
+            "sim/cockpit2/gauges/indicators/sideslip_degrees",
+        ])
         self.dr_psi = xp.findDataRef("sim/flightmodel/position/psi")        # deg
         self.dr_r   = xp.findDataRef("sim/flightmodel/position/R")          # deg/s
         self.dr_alt = xp.findDataRef("sim/flightmodel/position/elevation")  # meters
@@ -68,6 +80,10 @@ class PythonInterface:
         )
         xp.scheduleFlightLoop(self.flightloop_id, 1.0 / HZ, 1)
         xp.sys_log("[UDPBridge] Flightloop scheduled")
+        if self.dr_beta_name:
+            xp.sys_log(f"[UDPBridge] sideslip source={self.dr_beta_name}")
+        else:
+            xp.sys_log("[UDPBridge] WARNING: no sideslip dataref found; beta_deg will be NaN")
 
         return self.Name, self.Sig, self.Desc
 
@@ -179,6 +195,7 @@ class PythonInterface:
                 "t": now,
                 "phi_deg": float(xp.getDataf(self.dr_phi)),
                 "p_deg_s": float(xp.getDataf(self.dr_p)),
+                "beta_deg": float(xp.getDataf(self.dr_beta)) if self.dr_beta else float("nan"),
                 "psi_deg": float(xp.getDataf(self.dr_psi)),
                 "r_deg_s": float(xp.getDataf(self.dr_r)),
                 "alt_m": float(xp.getDataf(self.dr_alt)),

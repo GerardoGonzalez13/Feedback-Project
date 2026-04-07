@@ -1,0 +1,2558 @@
+{
+  "results": [
+    {
+      "controller_type": "baseline",
+      "Recovered values": {
+        "performance_metrics": {
+          "target_bank_deg": 60.0,
+          "handoff_detection": "first baseline_phase == neutral_observation",
+          "time_to_60deg_bank_s": 7.736098527908325,
+          "roll_rate_at_60deg_deg_s": 1.6568039655685425,
+          "controller_handoff_elapsed_s": 8.310612678527832,
+          "bank_angle_at_handoff_deg": 58.911155700683594,
+          "roll_rate_at_handoff_deg_s": 1.4080026149749756,
+          "peak_bank_after_handoff_deg": 82.16285705566406,
+          "rms_bank_after_handoff_deg": 71.2444991408782,
+          "time_to_abs_phi_lt_10_deg_s": "NOT_REACHED",
+          "time_to_abs_phi_lt_5_deg_s": "NOT_REACHED",
+          "settling_time_abs_phi_lt_5_deg_hold_2s_s": "NOT_REACHED",
+          "altitude_loss_after_handoff_ft": 2729.376131826172,
+          "maximum_roll_rate_after_handoff_deg_s": 4.089494228363037,
+          "minimum_negative_bank_after_handoff_deg": 55.127166748046875,
+          "maximum_logged_command_magnitude": 0.08,
+          "maximum_logged_command_by_column": {
+            "cmd_roll": 0.04487976551055908,
+            "cmd_pitch": 0.08,
+            "cmd_yaw": 0.0
+          },
+          "post_handoff_duration_s": 19.97388195991516
+        },
+        "controller_design": {
+          "baseline_capture_gains_from_external_run_baseline_py": {
+            "K_TO_TARGET": 0.018,
+            "P_DAMP": 0.025,
+            "CAPTURE_K_TO_TARGET": 0.01,
+            "CAPTURE_P_DAMP": 0.04
+          },
+          "note": "These are the baseline entry/capture gains, not a closed-loop recovery controller."
+        },
+        "model_estimation_evidence": {}
+      },
+      "Files used": [
+        "data/runs/baseline_1775260512.csv"
+      ],
+      "How each value was obtained": {
+        "run_identification": {
+          "selected_run": "data/runs/baseline_1775260512.csv",
+          "selection_reason": "Exact run file provided in the recovery request.",
+          "ambiguity": "None for the primary run file itself."
+        },
+        "performance_metrics": "first baseline_phase == neutral_observation",
+        "controller_design": "These are the baseline entry/capture gains, not a closed-loop recovery controller."
+      },
+      "Ambiguities or assumptions": [
+        "None beyond file-format-based handoff detection."
+      ],
+      "Still missing": [
+        "state-space model for baseline [UNRECOVERABLE FROM CURRENT FILES]",
+        "closed-loop matrices for baseline [UNRECOVERABLE FROM CURRENT FILES]",
+        "eigenvalues for baseline [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "Suggested placeholders for unrecoverable values": [
+        "state-space model for baseline [UNRECOVERABLE FROM CURRENT FILES]",
+        "closed-loop matrices for baseline [UNRECOVERABLE FROM CURRENT FILES]",
+        "eigenvalues for baseline [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "run_identification": {
+        "selected_run": "data/runs/baseline_1775260512.csv",
+        "selection_reason": "Exact run file provided in the recovery request.",
+        "ambiguity": "None for the primary run file itself."
+      },
+      "performance_metrics": {
+        "target_bank_deg": 60.0,
+        "handoff_detection": "first baseline_phase == neutral_observation",
+        "time_to_60deg_bank_s": 7.736098527908325,
+        "roll_rate_at_60deg_deg_s": 1.6568039655685425,
+        "controller_handoff_elapsed_s": 8.310612678527832,
+        "bank_angle_at_handoff_deg": 58.911155700683594,
+        "roll_rate_at_handoff_deg_s": 1.4080026149749756,
+        "peak_bank_after_handoff_deg": 82.16285705566406,
+        "rms_bank_after_handoff_deg": 71.2444991408782,
+        "time_to_abs_phi_lt_10_deg_s": "NOT_REACHED",
+        "time_to_abs_phi_lt_5_deg_s": "NOT_REACHED",
+        "settling_time_abs_phi_lt_5_deg_hold_2s_s": "NOT_REACHED",
+        "altitude_loss_after_handoff_ft": 2729.376131826172,
+        "maximum_roll_rate_after_handoff_deg_s": 4.089494228363037,
+        "minimum_negative_bank_after_handoff_deg": 55.127166748046875,
+        "maximum_logged_command_magnitude": 0.08,
+        "maximum_logged_command_by_column": {
+          "cmd_roll": 0.04487976551055908,
+          "cmd_pitch": 0.08,
+          "cmd_yaw": 0.0
+        },
+        "post_handoff_duration_s": 19.97388195991516
+      },
+      "controller_design": {
+        "baseline_capture_gains_from_external_run_baseline_py": {
+          "K_TO_TARGET": 0.018,
+          "P_DAMP": 0.025,
+          "CAPTURE_K_TO_TARGET": 0.01,
+          "CAPTURE_P_DAMP": 0.04
+        },
+        "note": "These are the baseline entry/capture gains, not a closed-loop recovery controller."
+      },
+      "model_estimation_evidence": {}
+    },
+    {
+      "controller_type": "PD",
+      "Recovered values": {
+        "performance_metrics": {
+          "target_bank_deg": 60.0,
+          "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+          "time_to_60deg_bank_s": 7.493968963623047,
+          "roll_rate_at_60deg_deg_s": 2.183469772338867,
+          "controller_handoff_elapsed_s": 7.550042152404785,
+          "bank_angle_at_handoff_deg": 57.492794036865234,
+          "roll_rate_at_handoff_deg_s": 2.0952696800231934,
+          "peak_bank_after_handoff_deg": 71.22723388671875,
+          "rms_bank_after_handoff_deg": 40.932566872616405,
+          "time_to_abs_phi_lt_10_deg_s": 16.63615894317627,
+          "time_to_abs_phi_lt_5_deg_s": 21.42812752723694,
+          "settling_time_abs_phi_lt_5_deg_hold_2s_s": 21.42812752723694,
+          "altitude_loss_after_handoff_ft": 0.0,
+          "maximum_roll_rate_after_handoff_deg_s": 12.44788646697998,
+          "minimum_negative_bank_after_handoff_deg": 4.003840923309326,
+          "maximum_logged_command_magnitude": 0.5,
+          "maximum_logged_command_by_column": {
+            "cmd_roll": 0.5,
+            "cmd_pitch": 0.25,
+            "cmd_yaw": 0.0
+          },
+          "post_handoff_duration_s": 24.366159915924072
+        },
+        "controller_design": {
+          "files_used": [
+            "git:aedd842:external/controller_roll.py",
+            "data/runs/controlled_1774837914.csv"
+          ],
+          "gains": {
+            "Kp": 0.08,
+            "Kd": 0.04,
+            "Ky": 0.01
+          },
+          "notes": [
+            "Recovered from the historical controller file in local git history.",
+            "The March 29 PD run log does not store gains directly."
+          ]
+        },
+        "model_estimation_evidence": {}
+      },
+      "Files used": [
+        "data/runs/controlled_1774837914.csv",
+        "git:aedd842:external/controller_roll.py"
+      ],
+      "How each value was obtained": {
+        "run_identification": {
+          "selected_run": "data/runs/controlled_1774837914.csv",
+          "selection_reason": "Exact run file provided in the recovery request.",
+          "ambiguity": "None for the primary run file itself."
+        },
+        "performance_metrics": "first sustained corrective cmd_roll after reaching target bank",
+        "controller_design": "See nested controller_design fields."
+      },
+      "Ambiguities or assumptions": [
+        "None beyond file-format-based handoff detection."
+      ],
+      "Still missing": [
+        "PD closed-loop matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD weighting matrices [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD eigenvalues [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD controllability rank [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "Suggested placeholders for unrecoverable values": [
+        "PD closed-loop matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD weighting matrices [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD eigenvalues [UNRECOVERABLE FROM CURRENT FILES]",
+        "PD controllability rank [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "run_identification": {
+        "selected_run": "data/runs/controlled_1774837914.csv",
+        "selection_reason": "Exact run file provided in the recovery request.",
+        "ambiguity": "None for the primary run file itself."
+      },
+      "performance_metrics": {
+        "target_bank_deg": 60.0,
+        "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+        "time_to_60deg_bank_s": 7.493968963623047,
+        "roll_rate_at_60deg_deg_s": 2.183469772338867,
+        "controller_handoff_elapsed_s": 7.550042152404785,
+        "bank_angle_at_handoff_deg": 57.492794036865234,
+        "roll_rate_at_handoff_deg_s": 2.0952696800231934,
+        "peak_bank_after_handoff_deg": 71.22723388671875,
+        "rms_bank_after_handoff_deg": 40.932566872616405,
+        "time_to_abs_phi_lt_10_deg_s": 16.63615894317627,
+        "time_to_abs_phi_lt_5_deg_s": 21.42812752723694,
+        "settling_time_abs_phi_lt_5_deg_hold_2s_s": 21.42812752723694,
+        "altitude_loss_after_handoff_ft": 0.0,
+        "maximum_roll_rate_after_handoff_deg_s": 12.44788646697998,
+        "minimum_negative_bank_after_handoff_deg": 4.003840923309326,
+        "maximum_logged_command_magnitude": 0.5,
+        "maximum_logged_command_by_column": {
+          "cmd_roll": 0.5,
+          "cmd_pitch": 0.25,
+          "cmd_yaw": 0.0
+        },
+        "post_handoff_duration_s": 24.366159915924072
+      },
+      "controller_design": {
+        "files_used": [
+          "git:aedd842:external/controller_roll.py",
+          "data/runs/controlled_1774837914.csv"
+        ],
+        "gains": {
+          "Kp": 0.08,
+          "Kd": 0.04,
+          "Ky": 0.01
+        },
+        "notes": [
+          "Recovered from the historical controller file in local git history.",
+          "The March 29 PD run log does not store gains directly."
+        ]
+      },
+      "model_estimation_evidence": {}
+    },
+    {
+      "controller_type": "2-state LQR",
+      "Recovered values": {
+        "performance_metrics": {
+          "target_bank_deg": 60.0,
+          "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+          "time_to_60deg_bank_s": 6.5262908935546875,
+          "roll_rate_at_60deg_deg_s": 1.6520271301269531,
+          "controller_handoff_elapsed_s": 6.625241041183472,
+          "bank_angle_at_handoff_deg": 57.219078063964844,
+          "roll_rate_at_handoff_deg_s": 1.6137657165527344,
+          "peak_bank_after_handoff_deg": 61.772029876708984,
+          "rms_bank_after_handoff_deg": 58.50228510258557,
+          "time_to_abs_phi_lt_10_deg_s": "NOT_REACHED",
+          "time_to_abs_phi_lt_5_deg_s": "NOT_REACHED",
+          "settling_time_abs_phi_lt_5_deg_hold_2s_s": "NOT_REACHED",
+          "altitude_loss_after_handoff_ft": 503.1643925878907,
+          "maximum_roll_rate_after_handoff_deg_s": 2.2088310718536377,
+          "minimum_negative_bank_after_handoff_deg": 56.95537185668945,
+          "maximum_logged_command_magnitude": 0.25377727965403385,
+          "maximum_logged_command_by_column": {
+            "cmd_roll": 0.18,
+            "cmd_pitch": 0.25,
+            "cmd_yaw": 0.0,
+            "roll_cmd_raw_lqr": 0.25377727965403385,
+            "roll_cmd_clamped": 0.25377727965403385
+          },
+          "post_handoff_duration_s": 22.339325666427612
+        },
+        "controller_design": {
+          "files_used": [
+            "data/runs/run_1774842310.csv",
+            "data/runs/controlled_1774849067.csv",
+            "external/estimate_ab_id.py"
+          ],
+          "model": {
+            "chosen_id_run": "data/runs/run_1774842310.csv",
+            "candidate_id_runs": [
+              {
+                "path": "data/runs/run_1774645989.csv",
+                "a_neutral_1_s": -0.008578821440550468,
+                "a_neutral_r2": -0.013080181998844642,
+                "a_neutral_n": 458,
+                "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+                "b_given_a_r2": 0.2978436832648087,
+                "b_given_a_n": 62,
+                "joint_a_1_s": -0.03313928882787121,
+                "joint_b_deg_s2_per_cmd": 14.854281196160231,
+                "joint_r2": 0.07721997714633366,
+                "joint_n": 520
+              },
+              {
+                "path": "data/runs/run_1774842310.csv",
+                "a_neutral_1_s": -0.01718333716132461,
+                "a_neutral_r2": -0.004754898561269538,
+                "a_neutral_n": 331,
+                "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+                "b_given_a_r2": 0.27282114347673836,
+                "b_given_a_n": 43,
+                "joint_a_1_s": -0.032223052991553744,
+                "joint_b_deg_s2_per_cmd": 16.457701496645846,
+                "joint_r2": 0.09426608545463089,
+                "joint_n": 374
+              }
+            ],
+            "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+            "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+            "A": [
+              [
+                0.0,
+                1.0
+              ],
+              [
+                0.0,
+                -0.032223052991553744
+              ]
+            ],
+            "B": [
+              [
+                0.0
+              ],
+              [
+                16.457701496645846
+              ]
+            ]
+          },
+          "Q": "[UNRECOVERABLE FROM CURRENT FILES]",
+          "R": "[UNRECOVERABLE FROM CURRENT FILES]",
+          "K": {
+            "K": [
+              0.0013135784699303888,
+              -0.021174462539367667
+            ],
+            "fit_rmse": 0.03095336343912688,
+            "fit_max_abs_error": 0.19824640123669568,
+            "recovery_method": "least-squares fit of logged roll_cmd_raw_lqr = -K [phi, p]^T during controlled_phase == controller"
+          },
+          "A_cl": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              -0.02161848235053512,
+              0.3162599308332689
+            ]
+          ],
+          "open_loop_eigenvalues": [
+            {
+              "real": 0.0,
+              "imag": 0.0
+            },
+            {
+              "real": -0.032223052991553744,
+              "imag": 0.0
+            }
+          ],
+          "closed_loop_eigenvalues": [
+            {
+              "real": 0.09993543292318716,
+              "imag": 0.0
+            },
+            {
+              "real": 0.21632449791008174,
+              "imag": 0.0
+            }
+          ],
+          "controllability_rank": 2
+        },
+        "model_estimation_evidence": {
+          "chosen_id_run": "data/runs/run_1774842310.csv",
+          "candidate_id_runs": [
+            {
+              "path": "data/runs/run_1774645989.csv",
+              "a_neutral_1_s": -0.008578821440550468,
+              "a_neutral_r2": -0.013080181998844642,
+              "a_neutral_n": 458,
+              "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+              "b_given_a_r2": 0.2978436832648087,
+              "b_given_a_n": 62,
+              "joint_a_1_s": -0.03313928882787121,
+              "joint_b_deg_s2_per_cmd": 14.854281196160231,
+              "joint_r2": 0.07721997714633366,
+              "joint_n": 520
+            },
+            {
+              "path": "data/runs/run_1774842310.csv",
+              "a_neutral_1_s": -0.01718333716132461,
+              "a_neutral_r2": -0.004754898561269538,
+              "a_neutral_n": 331,
+              "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+              "b_given_a_r2": 0.27282114347673836,
+              "b_given_a_n": 43,
+              "joint_a_1_s": -0.032223052991553744,
+              "joint_b_deg_s2_per_cmd": 16.457701496645846,
+              "joint_r2": 0.09426608545463089,
+              "joint_n": 374
+            }
+          ],
+          "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+          "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+          "A": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -0.032223052991553744
+            ]
+          ],
+          "B": [
+            [
+              0.0
+            ],
+            [
+              16.457701496645846
+            ]
+          ]
+        }
+      },
+      "Files used": [
+        "data/runs/controlled_1774849067.csv",
+        "data/runs/run_1774842310.csv",
+        "external/estimate_ab_id.py"
+      ],
+      "How each value was obtained": {
+        "run_identification": {
+          "selected_run": "data/runs/controlled_1774849067.csv",
+          "selection_reason": "Exact run file provided in the recovery request.",
+          "ambiguity": "None for the primary run file itself."
+        },
+        "performance_metrics": "first sustained corrective cmd_roll after reaching target bank",
+        "controller_design": "See nested controller_design fields."
+      },
+      "Ambiguities or assumptions": [
+        "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate."
+      ],
+      "Still missing": [
+        "2-state LQR Q matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "2-state LQR R matrix [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "Suggested placeholders for unrecoverable values": [
+        "2-state LQR Q matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "2-state LQR R matrix [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "run_identification": {
+        "selected_run": "data/runs/controlled_1774849067.csv",
+        "selection_reason": "Exact run file provided in the recovery request.",
+        "ambiguity": "None for the primary run file itself."
+      },
+      "performance_metrics": {
+        "target_bank_deg": 60.0,
+        "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+        "time_to_60deg_bank_s": 6.5262908935546875,
+        "roll_rate_at_60deg_deg_s": 1.6520271301269531,
+        "controller_handoff_elapsed_s": 6.625241041183472,
+        "bank_angle_at_handoff_deg": 57.219078063964844,
+        "roll_rate_at_handoff_deg_s": 1.6137657165527344,
+        "peak_bank_after_handoff_deg": 61.772029876708984,
+        "rms_bank_after_handoff_deg": 58.50228510258557,
+        "time_to_abs_phi_lt_10_deg_s": "NOT_REACHED",
+        "time_to_abs_phi_lt_5_deg_s": "NOT_REACHED",
+        "settling_time_abs_phi_lt_5_deg_hold_2s_s": "NOT_REACHED",
+        "altitude_loss_after_handoff_ft": 503.1643925878907,
+        "maximum_roll_rate_after_handoff_deg_s": 2.2088310718536377,
+        "minimum_negative_bank_after_handoff_deg": 56.95537185668945,
+        "maximum_logged_command_magnitude": 0.25377727965403385,
+        "maximum_logged_command_by_column": {
+          "cmd_roll": 0.18,
+          "cmd_pitch": 0.25,
+          "cmd_yaw": 0.0,
+          "roll_cmd_raw_lqr": 0.25377727965403385,
+          "roll_cmd_clamped": 0.25377727965403385
+        },
+        "post_handoff_duration_s": 22.339325666427612
+      },
+      "controller_design": {
+        "files_used": [
+          "data/runs/run_1774842310.csv",
+          "data/runs/controlled_1774849067.csv",
+          "external/estimate_ab_id.py"
+        ],
+        "model": {
+          "chosen_id_run": "data/runs/run_1774842310.csv",
+          "candidate_id_runs": [
+            {
+              "path": "data/runs/run_1774645989.csv",
+              "a_neutral_1_s": -0.008578821440550468,
+              "a_neutral_r2": -0.013080181998844642,
+              "a_neutral_n": 458,
+              "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+              "b_given_a_r2": 0.2978436832648087,
+              "b_given_a_n": 62,
+              "joint_a_1_s": -0.03313928882787121,
+              "joint_b_deg_s2_per_cmd": 14.854281196160231,
+              "joint_r2": 0.07721997714633366,
+              "joint_n": 520
+            },
+            {
+              "path": "data/runs/run_1774842310.csv",
+              "a_neutral_1_s": -0.01718333716132461,
+              "a_neutral_r2": -0.004754898561269538,
+              "a_neutral_n": 331,
+              "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+              "b_given_a_r2": 0.27282114347673836,
+              "b_given_a_n": 43,
+              "joint_a_1_s": -0.032223052991553744,
+              "joint_b_deg_s2_per_cmd": 16.457701496645846,
+              "joint_r2": 0.09426608545463089,
+              "joint_n": 374
+            }
+          ],
+          "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+          "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+          "A": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -0.032223052991553744
+            ]
+          ],
+          "B": [
+            [
+              0.0
+            ],
+            [
+              16.457701496645846
+            ]
+          ]
+        },
+        "Q": "[UNRECOVERABLE FROM CURRENT FILES]",
+        "R": "[UNRECOVERABLE FROM CURRENT FILES]",
+        "K": {
+          "K": [
+            0.0013135784699303888,
+            -0.021174462539367667
+          ],
+          "fit_rmse": 0.03095336343912688,
+          "fit_max_abs_error": 0.19824640123669568,
+          "recovery_method": "least-squares fit of logged roll_cmd_raw_lqr = -K [phi, p]^T during controlled_phase == controller"
+        },
+        "A_cl": [
+          [
+            0.0,
+            1.0
+          ],
+          [
+            -0.02161848235053512,
+            0.3162599308332689
+          ]
+        ],
+        "open_loop_eigenvalues": [
+          {
+            "real": 0.0,
+            "imag": 0.0
+          },
+          {
+            "real": -0.032223052991553744,
+            "imag": 0.0
+          }
+        ],
+        "closed_loop_eigenvalues": [
+          {
+            "real": 0.09993543292318716,
+            "imag": 0.0
+          },
+          {
+            "real": 0.21632449791008174,
+            "imag": 0.0
+          }
+        ],
+        "controllability_rank": 2
+      },
+      "model_estimation_evidence": {
+        "chosen_id_run": "data/runs/run_1774842310.csv",
+        "candidate_id_runs": [
+          {
+            "path": "data/runs/run_1774645989.csv",
+            "a_neutral_1_s": -0.008578821440550468,
+            "a_neutral_r2": -0.013080181998844642,
+            "a_neutral_n": 458,
+            "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+            "b_given_a_r2": 0.2978436832648087,
+            "b_given_a_n": 62,
+            "joint_a_1_s": -0.03313928882787121,
+            "joint_b_deg_s2_per_cmd": 14.854281196160231,
+            "joint_r2": 0.07721997714633366,
+            "joint_n": 520
+          },
+          {
+            "path": "data/runs/run_1774842310.csv",
+            "a_neutral_1_s": -0.01718333716132461,
+            "a_neutral_r2": -0.004754898561269538,
+            "a_neutral_n": 331,
+            "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+            "b_given_a_r2": 0.27282114347673836,
+            "b_given_a_n": 43,
+            "joint_a_1_s": -0.032223052991553744,
+            "joint_b_deg_s2_per_cmd": 16.457701496645846,
+            "joint_r2": 0.09426608545463089,
+            "joint_n": 374
+          }
+        ],
+        "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+        "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+        "A": [
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            -0.032223052991553744
+          ]
+        ],
+        "B": [
+          [
+            0.0
+          ],
+          [
+            16.457701496645846
+          ]
+        ]
+      }
+    },
+    {
+      "controller_type": "2-state LQI",
+      "Recovered values": {
+        "performance_metrics": {
+          "target_bank_deg": 60.0,
+          "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+          "time_to_60deg_bank_s": 8.745351076126099,
+          "roll_rate_at_60deg_deg_s": 1.7379446029663086,
+          "controller_handoff_elapsed_s": 8.795095205307007,
+          "bank_angle_at_handoff_deg": 57.18864440917969,
+          "roll_rate_at_handoff_deg_s": 1.7153130769729614,
+          "peak_bank_after_handoff_deg": 62.771785736083984,
+          "rms_bank_after_handoff_deg": 30.841301295044886,
+          "time_to_abs_phi_lt_10_deg_s": 9.58729338645935,
+          "time_to_abs_phi_lt_5_deg_s": 10.463147640228271,
+          "settling_time_abs_phi_lt_5_deg_hold_2s_s": 10.463147640228271,
+          "altitude_loss_after_handoff_ft": 0.0,
+          "maximum_roll_rate_after_handoff_deg_s": 14.949492454528809,
+          "minimum_negative_bank_after_handoff_deg": -13.187135696411133,
+          "maximum_logged_command_magnitude": 1.7655163265228155,
+          "maximum_logged_command_by_column": {
+            "cmd_roll": 0.5,
+            "cmd_pitch": 0.25,
+            "cmd_yaw": 0.0,
+            "roll_cmd_raw_lqi": 1.7655163265228155,
+            "roll_cmd_clamped": 0.5
+          },
+          "post_handoff_duration_s": 22.423797607421875
+        },
+        "controller_design": {
+          "files_used": [
+            "data/runs/run_1774842310.csv",
+            "data/runs/controlled_1774927980.csv",
+            "external/estimate_ab_id.py"
+          ],
+          "model_base": {
+            "chosen_id_run": "data/runs/run_1774842310.csv",
+            "candidate_id_runs": [
+              {
+                "path": "data/runs/run_1774645989.csv",
+                "a_neutral_1_s": -0.008578821440550468,
+                "a_neutral_r2": -0.013080181998844642,
+                "a_neutral_n": 458,
+                "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+                "b_given_a_r2": 0.2978436832648087,
+                "b_given_a_n": 62,
+                "joint_a_1_s": -0.03313928882787121,
+                "joint_b_deg_s2_per_cmd": 14.854281196160231,
+                "joint_r2": 0.07721997714633366,
+                "joint_n": 520
+              },
+              {
+                "path": "data/runs/run_1774842310.csv",
+                "a_neutral_1_s": -0.01718333716132461,
+                "a_neutral_r2": -0.004754898561269538,
+                "a_neutral_n": 331,
+                "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+                "b_given_a_r2": 0.27282114347673836,
+                "b_given_a_n": 43,
+                "joint_a_1_s": -0.032223052991553744,
+                "joint_b_deg_s2_per_cmd": 16.457701496645846,
+                "joint_r2": 0.09426608545463089,
+                "joint_n": 374
+              }
+            ],
+            "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+            "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+            "A": [
+              [
+                0.0,
+                1.0
+              ],
+              [
+                0.0,
+                -0.032223052991553744
+              ]
+            ],
+            "B": [
+              [
+                0.0
+              ],
+              [
+                16.457701496645846
+              ]
+            ]
+          },
+          "A_aug": [
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.032223052991553744,
+              0.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "B_aug": [
+            [
+              0.0
+            ],
+            [
+              16.457701496645846
+            ],
+            [
+              0.0
+            ]
+          ],
+          "Q": "[UNRECOVERABLE FROM CURRENT FILES]",
+          "R": "[UNRECOVERABLE FROM CURRENT FILES]",
+          "K_aug": {
+            "K_aug": [
+              0.005090713691977639,
+              -0.008072877367317688,
+              0.00037044192469811235
+            ],
+            "K_state": [
+              0.005090713691977639,
+              -0.008072877367317688
+            ],
+            "Ki": 0.00037044192469811235,
+            "integrator_definition": "z_dot = phi_deg, initialized to zero at controller handoff and integrated with trapezoidal rule",
+            "fit_rmse": 0.2423834983826203,
+            "fit_max_abs_error": 1.3943548478151926,
+            "recovery_method": "least-squares fit of logged roll_cmd_raw_lqi = -[K_phi, K_p, K_i] [phi, p, z]^T during controlled_phase == controller"
+          },
+          "open_loop_eigenvalues": [
+            {
+              "real": 0.0,
+              "imag": 0.0
+            },
+            {
+              "real": 0.0,
+              "imag": 0.0
+            },
+            {
+              "real": -0.032223052991553744,
+              "imag": 0.0
+            }
+          ],
+          "closed_loop_eigenvalues": [
+            {
+              "real": 0.08259508011286512,
+              "imag": 0.2960116358409913
+            },
+            {
+              "real": 0.08259508011286512,
+              "imag": -0.2960116358409913
+            },
+            {
+              "real": -0.06455220728694144,
+              "imag": 0.0
+            }
+          ],
+          "A_cl": [
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -0.08378144634745588,
+              0.10063795293878895,
+              -0.0060966226185244915
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "controllability_rank": 3
+        },
+        "model_estimation_evidence": {
+          "chosen_id_run": "data/runs/run_1774842310.csv",
+          "candidate_id_runs": [
+            {
+              "path": "data/runs/run_1774645989.csv",
+              "a_neutral_1_s": -0.008578821440550468,
+              "a_neutral_r2": -0.013080181998844642,
+              "a_neutral_n": 458,
+              "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+              "b_given_a_r2": 0.2978436832648087,
+              "b_given_a_n": 62,
+              "joint_a_1_s": -0.03313928882787121,
+              "joint_b_deg_s2_per_cmd": 14.854281196160231,
+              "joint_r2": 0.07721997714633366,
+              "joint_n": 520
+            },
+            {
+              "path": "data/runs/run_1774842310.csv",
+              "a_neutral_1_s": -0.01718333716132461,
+              "a_neutral_r2": -0.004754898561269538,
+              "a_neutral_n": 331,
+              "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+              "b_given_a_r2": 0.27282114347673836,
+              "b_given_a_n": 43,
+              "joint_a_1_s": -0.032223052991553744,
+              "joint_b_deg_s2_per_cmd": 16.457701496645846,
+              "joint_r2": 0.09426608545463089,
+              "joint_n": 374
+            }
+          ],
+          "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+          "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+          "A": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -0.032223052991553744
+            ]
+          ],
+          "B": [
+            [
+              0.0
+            ],
+            [
+              16.457701496645846
+            ]
+          ]
+        }
+      },
+      "Files used": [
+        "data/runs/controlled_1774927980.csv",
+        "data/runs/run_1774842310.csv",
+        "external/estimate_ab_id.py"
+      ],
+      "How each value was obtained": {
+        "run_identification": {
+          "selected_run": "data/runs/controlled_1774927980.csv",
+          "selection_reason": "Exact run file provided in the recovery request.",
+          "ambiguity": "None for the primary run file itself."
+        },
+        "performance_metrics": "first sustained corrective cmd_roll after reaching target bank",
+        "controller_design": "See nested controller_design fields."
+      },
+      "Ambiguities or assumptions": [
+        "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate."
+      ],
+      "Still missing": [
+        "2-state LQI Q matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "2-state LQI R matrix [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "Suggested placeholders for unrecoverable values": [
+        "2-state LQI Q matrix [UNRECOVERABLE FROM CURRENT FILES]",
+        "2-state LQI R matrix [UNRECOVERABLE FROM CURRENT FILES]"
+      ],
+      "run_identification": {
+        "selected_run": "data/runs/controlled_1774927980.csv",
+        "selection_reason": "Exact run file provided in the recovery request.",
+        "ambiguity": "None for the primary run file itself."
+      },
+      "performance_metrics": {
+        "target_bank_deg": 60.0,
+        "handoff_detection": "first sustained corrective cmd_roll after reaching target bank",
+        "time_to_60deg_bank_s": 8.745351076126099,
+        "roll_rate_at_60deg_deg_s": 1.7379446029663086,
+        "controller_handoff_elapsed_s": 8.795095205307007,
+        "bank_angle_at_handoff_deg": 57.18864440917969,
+        "roll_rate_at_handoff_deg_s": 1.7153130769729614,
+        "peak_bank_after_handoff_deg": 62.771785736083984,
+        "rms_bank_after_handoff_deg": 30.841301295044886,
+        "time_to_abs_phi_lt_10_deg_s": 9.58729338645935,
+        "time_to_abs_phi_lt_5_deg_s": 10.463147640228271,
+        "settling_time_abs_phi_lt_5_deg_hold_2s_s": 10.463147640228271,
+        "altitude_loss_after_handoff_ft": 0.0,
+        "maximum_roll_rate_after_handoff_deg_s": 14.949492454528809,
+        "minimum_negative_bank_after_handoff_deg": -13.187135696411133,
+        "maximum_logged_command_magnitude": 1.7655163265228155,
+        "maximum_logged_command_by_column": {
+          "cmd_roll": 0.5,
+          "cmd_pitch": 0.25,
+          "cmd_yaw": 0.0,
+          "roll_cmd_raw_lqi": 1.7655163265228155,
+          "roll_cmd_clamped": 0.5
+        },
+        "post_handoff_duration_s": 22.423797607421875
+      },
+      "controller_design": {
+        "files_used": [
+          "data/runs/run_1774842310.csv",
+          "data/runs/controlled_1774927980.csv",
+          "external/estimate_ab_id.py"
+        ],
+        "model_base": {
+          "chosen_id_run": "data/runs/run_1774842310.csv",
+          "candidate_id_runs": [
+            {
+              "path": "data/runs/run_1774645989.csv",
+              "a_neutral_1_s": -0.008578821440550468,
+              "a_neutral_r2": -0.013080181998844642,
+              "a_neutral_n": 458,
+              "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+              "b_given_a_r2": 0.2978436832648087,
+              "b_given_a_n": 62,
+              "joint_a_1_s": -0.03313928882787121,
+              "joint_b_deg_s2_per_cmd": 14.854281196160231,
+              "joint_r2": 0.07721997714633366,
+              "joint_n": 520
+            },
+            {
+              "path": "data/runs/run_1774842310.csv",
+              "a_neutral_1_s": -0.01718333716132461,
+              "a_neutral_r2": -0.004754898561269538,
+              "a_neutral_n": 331,
+              "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+              "b_given_a_r2": 0.27282114347673836,
+              "b_given_a_n": 43,
+              "joint_a_1_s": -0.032223052991553744,
+              "joint_b_deg_s2_per_cmd": 16.457701496645846,
+              "joint_r2": 0.09426608545463089,
+              "joint_n": 374
+            }
+          ],
+          "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+          "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+          "A": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -0.032223052991553744
+            ]
+          ],
+          "B": [
+            [
+              0.0
+            ],
+            [
+              16.457701496645846
+            ]
+          ]
+        },
+        "A_aug": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            -0.032223052991553744,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "B_aug": [
+          [
+            0.0
+          ],
+          [
+            16.457701496645846
+          ],
+          [
+            0.0
+          ]
+        ],
+        "Q": "[UNRECOVERABLE FROM CURRENT FILES]",
+        "R": "[UNRECOVERABLE FROM CURRENT FILES]",
+        "K_aug": {
+          "K_aug": [
+            0.005090713691977639,
+            -0.008072877367317688,
+            0.00037044192469811235
+          ],
+          "K_state": [
+            0.005090713691977639,
+            -0.008072877367317688
+          ],
+          "Ki": 0.00037044192469811235,
+          "integrator_definition": "z_dot = phi_deg, initialized to zero at controller handoff and integrated with trapezoidal rule",
+          "fit_rmse": 0.2423834983826203,
+          "fit_max_abs_error": 1.3943548478151926,
+          "recovery_method": "least-squares fit of logged roll_cmd_raw_lqi = -[K_phi, K_p, K_i] [phi, p, z]^T during controlled_phase == controller"
+        },
+        "open_loop_eigenvalues": [
+          {
+            "real": 0.0,
+            "imag": 0.0
+          },
+          {
+            "real": 0.0,
+            "imag": 0.0
+          },
+          {
+            "real": -0.032223052991553744,
+            "imag": 0.0
+          }
+        ],
+        "closed_loop_eigenvalues": [
+          {
+            "real": 0.08259508011286512,
+            "imag": 0.2960116358409913
+          },
+          {
+            "real": 0.08259508011286512,
+            "imag": -0.2960116358409913
+          },
+          {
+            "real": -0.06455220728694144,
+            "imag": 0.0
+          }
+        ],
+        "A_cl": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.08378144634745588,
+            0.10063795293878895,
+            -0.0060966226185244915
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "controllability_rank": 3
+      },
+      "model_estimation_evidence": {
+        "chosen_id_run": "data/runs/run_1774842310.csv",
+        "candidate_id_runs": [
+          {
+            "path": "data/runs/run_1774645989.csv",
+            "a_neutral_1_s": -0.008578821440550468,
+            "a_neutral_r2": -0.013080181998844642,
+            "a_neutral_n": 458,
+            "b_given_a_deg_s2_per_cmd": 14.174055345881728,
+            "b_given_a_r2": 0.2978436832648087,
+            "b_given_a_n": 62,
+            "joint_a_1_s": -0.03313928882787121,
+            "joint_b_deg_s2_per_cmd": 14.854281196160231,
+            "joint_r2": 0.07721997714633366,
+            "joint_n": 520
+          },
+          {
+            "path": "data/runs/run_1774842310.csv",
+            "a_neutral_1_s": -0.01718333716132461,
+            "a_neutral_r2": -0.004754898561269538,
+            "a_neutral_n": 331,
+            "b_given_a_deg_s2_per_cmd": 16.068220787757276,
+            "b_given_a_r2": 0.27282114347673836,
+            "b_given_a_n": 43,
+            "joint_a_1_s": -0.032223052991553744,
+            "joint_b_deg_s2_per_cmd": 16.457701496645846,
+            "joint_r2": 0.09426608545463089,
+            "joint_n": 374
+          }
+        ],
+        "selection_reason": "Selected the latest open-loop pulse-identification run immediately preceding the 2-state LQR run. The earlier run_1774645989.csv is also preserved as an ambiguity candidate.",
+        "regression_method": "least-squares on smoothed roll-rate dynamics from external/estimate_ab_id.py",
+        "A": [
+          [
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            -0.032223052991553744
+          ]
+        ],
+        "B": [
+          [
+            0.0
+          ],
+          [
+            16.457701496645846
+          ]
+        ]
+      }
+    },
+    {
+      "controller_type": "4-state LQR",
+      "Recovered values": {
+        "performance_metrics": {
+          "target_bank_deg": 60.0,
+          "handoff_detection": "first logged controller_handoff_elapsed_s",
+          "time_to_60deg_bank_s": 7.400812149047852,
+          "roll_rate_at_60deg_deg_s": 1.6734153032302856,
+          "controller_handoff_elapsed_s": 7.872326374053955,
+          "bank_angle_at_handoff_deg": 58.99831008911133,
+          "roll_rate_at_handoff_deg_s": 1.4321420192718506,
+          "peak_bank_after_handoff_deg": 59.4560432434082,
+          "rms_bank_after_handoff_deg": 17.445340691388058,
+          "time_to_abs_phi_lt_10_deg_s": 4.615664720535278,
+          "time_to_abs_phi_lt_5_deg_s": 6.4968671798706055,
+          "settling_time_abs_phi_lt_5_deg_hold_2s_s": 6.4968671798706055,
+          "altitude_loss_after_handoff_ft": 0.0,
+          "maximum_roll_rate_after_handoff_deg_s": 24.723339080810547,
+          "minimum_negative_bank_after_handoff_deg": 1.2440330982208252,
+          "maximum_logged_command_magnitude": 3.324578160581984,
+          "maximum_logged_command_by_column": {
+            "cmd_roll": 0.65,
+            "cmd_pitch": 0.25,
+            "cmd_yaw": 0.3,
+            "roll_cmd_raw_lqr_mimo": 3.324578160581984,
+            "yaw_cmd_raw_lqr_mimo": 0.48044953364743187,
+            "roll_cmd_clamped": 0.65,
+            "yaw_cmd_clamped": 0.3
+          },
+          "post_handoff_duration_s": 19.95781898498535
+        },
+        "controller_design": {
+          "files_used": [
+            "data/runs/run_1774933421_lateral_mimo_summary.json",
+            "external/run_controlled.py",
+            "data/runs/controlled_1774975570.csv"
+          ],
+          "model_estimation_method": "multivariable least-squares on smoothed state derivatives from external/estimate_lateral_mimo.py",
+          "A": [
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.025545897503950955,
+              -0.7429541311467451,
+              3.9478079552880483,
+              1.1736544817477919
+            ],
+            [
+              -0.005250918858339866,
+              -0.21563339694180422,
+              0.6050596652368583,
+              0.27429734435106445
+            ],
+            [
+              0.04938567372346655,
+              -0.16669281975829087,
+              -3.6107122268414438,
+              -0.7690961777688887
+            ]
+          ],
+          "B": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              50.08144468745593,
+              5.571536812572264
+            ],
+            [
+              5.048178653185756,
+              6.8455892622091215
+            ],
+            [
+              3.4116789187650665,
+              30.816660394425497
+            ]
+          ],
+          "fit": {
+            "p_dot": {
+              "coefficients": [
+                -0.025545897503950955,
+                -0.7429541311467451,
+                3.9478079552880483,
+                1.1736544817477919,
+                50.08144468745593,
+                5.571536812572264
+              ],
+              "r2": 0.47777605514460575
+            },
+            "beta_dot": {
+              "coefficients": [
+                -0.005250918858339866,
+                -0.21563339694180422,
+                0.6050596652368583,
+                0.27429734435106445,
+                5.048178653185756,
+                6.8455892622091215
+              ],
+              "r2": 0.5075959143256861
+            },
+            "r_dot": {
+              "coefficients": [
+                0.04938567372346655,
+                -0.16669281975829087,
+                -3.6107122268414438,
+                -0.7690961777688887,
+                3.4116789187650665,
+                30.816660394425497
+              ],
+              "r2": 0.5599640199826937
+            }
+          },
+          "phi_dot_minus_p_mean_deg_s": -1.2717358354567592,
+          "open_loop_eigenvalues": [
+            {
+              "real": -0.4031490448595495,
+              "imag": 1.2176001776440635
+            },
+            {
+              "real": -0.4031490448595495,
+              "imag": -1.2176001776440635
+            },
+            {
+              "real": 0.046638723375783,
+              "imag": 0.0
+            },
+            {
+              "real": -0.14733127733545937,
+              "imag": 0.0
+            }
+          ],
+          "controllability_rank": 4,
+          "best_matching_current_candidate": {
+            "candidate": "phi_x5_roll_r_more_down",
+            "q_diag": [
+              100.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              10.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.05190639762489085,
+                0.10138554596667289,
+                -0.056073980497323345,
+                0.01715287419177462
+              ],
+              [
+                0.007140786276748029,
+                -0.04064771004813013,
+                0.4941936209256028,
+                0.03876635321481159
+              ]
+            ],
+            "roll_rmse": 0.15835778764373762,
+            "yaw_rmse": 0.021412498666794358,
+            "score": 0.179770286310532
+          },
+          "candidate_match_table": [
+            {
+              "candidate": "phi_x5_roll_r_more_down",
+              "q_diag": [
+                100.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                10.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.05190639762489085,
+                  0.10138554596667289,
+                  -0.056073980497323345,
+                  0.01715287419177462
+                ],
+                [
+                  0.007140786276748029,
+                  -0.04064771004813013,
+                  0.4941936209256028,
+                  0.03876635321481159
+                ]
+              ],
+              "roll_rmse": 0.15835778764373762,
+              "yaw_rmse": 0.021412498666794358,
+              "score": 0.179770286310532
+            },
+            {
+              "candidate": "phi_x5_roll_r_down",
+              "q_diag": [
+                100.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                12.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.04725498577801704,
+                  0.09290496946801917,
+                  -0.05384379675120224,
+                  0.01649389219901003
+                ],
+                [
+                  0.007843058837357853,
+                  -0.03928108115984008,
+                  0.4934912073147999,
+                  0.03908310139554919
+                ]
+              ],
+              "roll_rmse": 0.15802059523615516,
+              "yaw_rmse": 0.023894962835499245,
+              "score": 0.1819155580716544
+            },
+            {
+              "candidate": "phi_x4_roll_r_more_down",
+              "q_diag": [
+                80.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                10.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.046511680781283433,
+                  0.10051199238454155,
+                  -0.05734482739177924,
+                  0.01715615624227395
+                ],
+                [
+                  0.005971529862993053,
+                  -0.040841129446922114,
+                  0.49388873638738096,
+                  0.03876767510930332
+                ]
+              ],
+              "roll_rmse": 0.17945367576781332,
+              "yaw_rmse": 0.027882130103553584,
+              "score": 0.2073358058713669
+            },
+            {
+              "candidate": "phi_x4_roll_r_down",
+              "q_diag": [
+                80.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                12.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.04235042643133555,
+                  0.09203516412688213,
+                  -0.05497266464153239,
+                  0.016480736876241384
+                ],
+                [
+                  0.006592654219748497,
+                  -0.0395082750534841,
+                  0.49317623765653806,
+                  0.03907984796547906
+                ]
+              ],
+              "roll_rmse": 0.19143704087322563,
+              "yaw_rmse": 0.026540200077287152,
+              "score": 0.2179772409505128
+            },
+            {
+              "candidate": "phi_x3_roll_r_down",
+              "q_diag": [
+                60.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                12.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.03679335510162307,
+                  0.0910440485334697,
+                  -0.05630948891456592,
+                  0.016466949257315518
+                ],
+                [
+                  0.005148448749213495,
+                  -0.03977149400695865,
+                  0.49279902996222325,
+                  0.03907642513450274
+                ]
+              ],
+              "roll_rmse": 0.2556033519516919,
+              "yaw_rmse": 0.04346179420427086,
+              "score": 0.2990651461559628
+            },
+            {
+              "candidate": "phi_x2",
+              "q_diag": [
+                40.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                18.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.02453481074953907,
+                  0.07354523013383923,
+                  -0.052819484035375355,
+                  0.014910265359358965
+                ],
+                [
+                  0.004471894069379415,
+                  -0.03692663860859311,
+                  0.4902342267562476,
+                  0.03987637670532861
+                ]
+              ],
+              "roll_rmse": 0.3627311971801358,
+              "yaw_rmse": 0.06778108904071524,
+              "score": 0.430512286220851
+            },
+            {
+              "candidate": "phi_plus_50_roll_r_down",
+              "q_diag": [
+                30.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                15.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.0234757154286797,
+                  0.0797764107699316,
+                  -0.05586432863956649,
+                  0.015567943905424276
+                ],
+                [
+                  0.0028223910353234786,
+                  -0.038654524286628494,
+                  0.49095585465689917,
+                  0.039481345644532186
+                ]
+              ],
+              "roll_rmse": 0.4064526301727091,
+              "yaw_rmse": 0.08573824533084248,
+              "score": 0.49219087550355156
+            },
+            {
+              "candidate": "phi_plus_50",
+              "q_diag": [
+                30.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                18.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.021380333818703433,
+                  0.07284359544801193,
+                  -0.05356746119331277,
+                  0.014869902332984667
+                ],
+                [
+                  0.0032537214665437197,
+                  -0.0372027730323378,
+                  0.4899320969612399,
+                  0.03986006333747963
+                ]
+              ],
+              "roll_rmse": 0.4089606053519174,
+              "yaw_rmse": 0.08589160996504205,
+              "score": 0.49485221531695944
+            },
+            {
+              "candidate": "current",
+              "q_diag": [
+                20.0,
+                8.0,
+                14.0,
+                18.0
+              ],
+              "r_diag": [
+                18.0,
+                12.0
+              ],
+              "K_physical": [
+                [
+                  0.017649484103495892,
+                  0.07200649664320055,
+                  -0.0544772905166014,
+                  0.014820744391636135
+                ],
+                [
+                  0.0017938825073480818,
+                  -0.037535717619137,
+                  0.48956204329821795,
+                  0.0398400587996988
+                ]
+              ],
+              "roll_rmse": 0.4648036548725628,
+              "yaw_rmse": 0.10824284521377817,
+              "score": 0.573046500086341
+            }
+          ],
+          "selected_Q": [
+            100.0,
+            8.0,
+            14.0,
+            18.0
+          ],
+          "selected_R": [
+            10.0,
+            12.0
+          ],
+          "selected_K_physical": [
+            [
+              0.05190639762489085,
+              0.10138554596667289,
+              -0.056073980497323345,
+              0.01715287419177462
+            ],
+            [
+              0.007140786276748029,
+              -0.04064771004813013,
+              0.4941936209256028,
+              0.03876635321481159
+            ]
+          ],
+          "A_cl": [
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.664878432691628,
+              -5.594018530704273,
+              4.002655956444851,
+              0.09862559765603907
+            ],
+            [
+              -0.31616657717192226,
+              -0.4491882183934761,
+              -2.494915408277951,
+              -0.07767196028695333
+            ],
+            [
+              -0.3477574744421288,
+              0.7400389267640277,
+              -18.648802794843235,
+              -2.0222658187963893
+            ]
+          ],
+          "closed_loop_eigenvalues": [
+            {
+              "real": -4.214142107783443,
+              "imag": 0.8289852357683754
+            },
+            {
+              "real": -4.214142107783443,
+              "imag": -0.8289852357683754
+            },
+            {
+              "real": -0.5543588578635602,
+              "imag": 0.0
+            },
+            {
+              "real": -1.128556684348172,
+              "imag": 0.0
+            }
+          ],
+          "ambiguity_note": "The exact candidate name was not logged in the March 31 run CSV. The values above are the closest match among the candidates currently present in external/run_controlled.py."
+        },
+        "model_estimation_evidence": {
+          "mimo_model_used_for_controller": {
+            "A": [
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                -0.025545897503950955,
+                -0.7429541311467451,
+                3.9478079552880483,
+                1.1736544817477919
+              ],
+              [
+                -0.005250918858339866,
+                -0.21563339694180422,
+                0.6050596652368583,
+                0.27429734435106445
+              ],
+              [
+                0.04938567372346655,
+                -0.16669281975829087,
+                -3.6107122268414438,
+                -0.7690961777688887
+              ]
+            ],
+            "B": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                50.08144468745593,
+                5.571536812572264
+              ],
+              [
+                5.048178653185756,
+                6.8455892622091215
+              ],
+              [
+                3.4116789187650665,
+                30.816660394425497
+              ]
+            ],
+            "fit": {
+              "p_dot": {
+                "coefficients": [
+                  -0.025545897503950955,
+                  -0.7429541311467451,
+                  3.9478079552880483,
+                  1.1736544817477919,
+                  50.08144468745593,
+                  5.571536812572264
+                ],
+                "r2": 0.47777605514460575
+              },
+              "beta_dot": {
+                "coefficients": [
+                  -0.005250918858339866,
+                  -0.21563339694180422,
+                  0.6050596652368583,
+                  0.27429734435106445,
+                  5.048178653185756,
+                  6.8455892622091215
+                ],
+                "r2": 0.5075959143256861
+              },
+              "r_dot": {
+                "coefficients": [
+                  0.04938567372346655,
+                  -0.16669281975829087,
+                  -3.6107122268414438,
+                  -0.7690961777688887,
+                  3.4116789187650665,
+                  30.816660394425497
+                ],
+                "r2": 0.5599640199826937
+              }
+            },
+            "phi_dot_minus_p_mean_deg_s": -1.2717358354567592,
+            "open_loop_eigenvalues": [
+              {
+                "real": -0.4031490448595495,
+                "imag": 1.2176001776440635
+              },
+              {
+                "real": -0.4031490448595495,
+                "imag": -1.2176001776440635
+              },
+              {
+                "real": 0.046638723375783,
+                "imag": 0.0
+              },
+              {
+                "real": -0.14733127733545937,
+                "imag": 0.0
+              }
+            ],
+            "regression_method": "multivariable least-squares on smoothed state derivatives from external/estimate_lateral_mimo.py"
+          },
+          "earlier_single_input_4state_estimate": {
+            "csv_path": "data/runs/run_1774842591.csv",
+            "raw_row_count": 394,
+            "sample_count_used": 370,
+            "smoothing_window_samples": 7,
+            "model_structure": {
+              "phi_dot": "p",
+              "p_dot": "a_p_phi*phi + a_p_p*p + a_p_beta*beta + a_p_r*r + b_p*u",
+              "beta_dot": "a_b_phi*phi + a_b_p*p + a_b_beta*beta + a_b_r*r + b_beta*u",
+              "r_dot": "a_r_phi*phi + a_r_p*p + a_r_beta*beta + a_r_r*r + b_r*u"
+            },
+            "A": [
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                -0.442334431849896,
+                -0.36077155814273,
+                14.988461146730048,
+                6.107589365856979
+              ],
+              [
+                -0.018409531460375265,
+                -0.031858816290655095,
+                0.5559534945550375,
+                0.25661855403385714
+              ],
+              [
+                0.02178670901819402,
+                0.13854454432039603,
+                -3.4391544481746332,
+                -0.6049611291065001
+              ]
+            ],
+            "B": [
+              [
+                0.0
+              ],
+              [
+                71.01098402990038
+              ],
+              [
+                -1.0910139842867503
+              ],
+              [
+                -7.563575685340627
+              ]
+            ],
+            "fit": {
+              "p_dot": {
+                "coefficients": [
+                  -0.442334431849896,
+                  -0.36077155814273,
+                  14.988461146730048,
+                  6.107589365856979,
+                  71.01098402990038
+                ],
+                "r2": 0.5258001536836622
+              },
+              "beta_dot": {
+                "coefficients": [
+                  -0.018409531460375265,
+                  -0.031858816290655095,
+                  0.5559534945550375,
+                  0.25661855403385714,
+                  -1.0910139842867503
+                ],
+                "r2": 0.40287374014795163
+              },
+              "r_dot": {
+                "coefficients": [
+                  0.02178670901819402,
+                  0.13854454432039603,
+                  -3.4391544481746332,
+                  -0.6049611291065001,
+                  -7.563575685340627
+                ],
+                "r2": 0.5429990132140674
+              }
+            },
+            "phi_dot_minus_p_mean_deg_s": 1.4715549160866932,
+            "open_loop_eigenvalues": [
+              {
+                "real": -0.27042373800236036,
+                "imag": 0.7860864993853013
+              },
+              {
+                "real": -0.27042373800236036,
+                "imag": -0.7860864993853013
+              },
+              {
+                "real": 0.06553414165526414,
+                "imag": 0.11449571513682258
+              },
+              {
+                "real": 0.06553414165526414,
+                "imag": -0.11449571513682258
+              }
+            ]
+          }
+        }
+      },
+      "Files used": [
+        "data/runs/controlled_1774975570.csv",
+        "data/runs/run_1774842591_lateral4_summary.json",
+        "data/runs/run_1774933421_lateral_mimo_summary.json",
+        "external/run_controlled.py"
+      ],
+      "How each value was obtained": {
+        "run_identification": {
+          "selected_run": "data/runs/controlled_1774975570.csv",
+          "selection_reason": "Exact run file provided in the recovery request.",
+          "ambiguity": "None for the primary run file itself."
+        },
+        "performance_metrics": "first logged controller_handoff_elapsed_s",
+        "controller_design": "See nested controller_design fields."
+      },
+      "Ambiguities or assumptions": [
+        "The exact candidate name was not logged in the March 31 run CSV. The values above are the closest match among the candidates currently present in external/run_controlled.py."
+      ],
+      "Still missing": [],
+      "Suggested placeholders for unrecoverable values": [],
+      "run_identification": {
+        "selected_run": "data/runs/controlled_1774975570.csv",
+        "selection_reason": "Exact run file provided in the recovery request.",
+        "ambiguity": "None for the primary run file itself."
+      },
+      "performance_metrics": {
+        "target_bank_deg": 60.0,
+        "handoff_detection": "first logged controller_handoff_elapsed_s",
+        "time_to_60deg_bank_s": 7.400812149047852,
+        "roll_rate_at_60deg_deg_s": 1.6734153032302856,
+        "controller_handoff_elapsed_s": 7.872326374053955,
+        "bank_angle_at_handoff_deg": 58.99831008911133,
+        "roll_rate_at_handoff_deg_s": 1.4321420192718506,
+        "peak_bank_after_handoff_deg": 59.4560432434082,
+        "rms_bank_after_handoff_deg": 17.445340691388058,
+        "time_to_abs_phi_lt_10_deg_s": 4.615664720535278,
+        "time_to_abs_phi_lt_5_deg_s": 6.4968671798706055,
+        "settling_time_abs_phi_lt_5_deg_hold_2s_s": 6.4968671798706055,
+        "altitude_loss_after_handoff_ft": 0.0,
+        "maximum_roll_rate_after_handoff_deg_s": 24.723339080810547,
+        "minimum_negative_bank_after_handoff_deg": 1.2440330982208252,
+        "maximum_logged_command_magnitude": 3.324578160581984,
+        "maximum_logged_command_by_column": {
+          "cmd_roll": 0.65,
+          "cmd_pitch": 0.25,
+          "cmd_yaw": 0.3,
+          "roll_cmd_raw_lqr_mimo": 3.324578160581984,
+          "yaw_cmd_raw_lqr_mimo": 0.48044953364743187,
+          "roll_cmd_clamped": 0.65,
+          "yaw_cmd_clamped": 0.3
+        },
+        "post_handoff_duration_s": 19.95781898498535
+      },
+      "controller_design": {
+        "files_used": [
+          "data/runs/run_1774933421_lateral_mimo_summary.json",
+          "external/run_controlled.py",
+          "data/runs/controlled_1774975570.csv"
+        ],
+        "model_estimation_method": "multivariable least-squares on smoothed state derivatives from external/estimate_lateral_mimo.py",
+        "A": [
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            -0.025545897503950955,
+            -0.7429541311467451,
+            3.9478079552880483,
+            1.1736544817477919
+          ],
+          [
+            -0.005250918858339866,
+            -0.21563339694180422,
+            0.6050596652368583,
+            0.27429734435106445
+          ],
+          [
+            0.04938567372346655,
+            -0.16669281975829087,
+            -3.6107122268414438,
+            -0.7690961777688887
+          ]
+        ],
+        "B": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            50.08144468745593,
+            5.571536812572264
+          ],
+          [
+            5.048178653185756,
+            6.8455892622091215
+          ],
+          [
+            3.4116789187650665,
+            30.816660394425497
+          ]
+        ],
+        "fit": {
+          "p_dot": {
+            "coefficients": [
+              -0.025545897503950955,
+              -0.7429541311467451,
+              3.9478079552880483,
+              1.1736544817477919,
+              50.08144468745593,
+              5.571536812572264
+            ],
+            "r2": 0.47777605514460575
+          },
+          "beta_dot": {
+            "coefficients": [
+              -0.005250918858339866,
+              -0.21563339694180422,
+              0.6050596652368583,
+              0.27429734435106445,
+              5.048178653185756,
+              6.8455892622091215
+            ],
+            "r2": 0.5075959143256861
+          },
+          "r_dot": {
+            "coefficients": [
+              0.04938567372346655,
+              -0.16669281975829087,
+              -3.6107122268414438,
+              -0.7690961777688887,
+              3.4116789187650665,
+              30.816660394425497
+            ],
+            "r2": 0.5599640199826937
+          }
+        },
+        "phi_dot_minus_p_mean_deg_s": -1.2717358354567592,
+        "open_loop_eigenvalues": [
+          {
+            "real": -0.4031490448595495,
+            "imag": 1.2176001776440635
+          },
+          {
+            "real": -0.4031490448595495,
+            "imag": -1.2176001776440635
+          },
+          {
+            "real": 0.046638723375783,
+            "imag": 0.0
+          },
+          {
+            "real": -0.14733127733545937,
+            "imag": 0.0
+          }
+        ],
+        "controllability_rank": 4,
+        "best_matching_current_candidate": {
+          "candidate": "phi_x5_roll_r_more_down",
+          "q_diag": [
+            100.0,
+            8.0,
+            14.0,
+            18.0
+          ],
+          "r_diag": [
+            10.0,
+            12.0
+          ],
+          "K_physical": [
+            [
+              0.05190639762489085,
+              0.10138554596667289,
+              -0.056073980497323345,
+              0.01715287419177462
+            ],
+            [
+              0.007140786276748029,
+              -0.04064771004813013,
+              0.4941936209256028,
+              0.03876635321481159
+            ]
+          ],
+          "roll_rmse": 0.15835778764373762,
+          "yaw_rmse": 0.021412498666794358,
+          "score": 0.179770286310532
+        },
+        "candidate_match_table": [
+          {
+            "candidate": "phi_x5_roll_r_more_down",
+            "q_diag": [
+              100.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              10.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.05190639762489085,
+                0.10138554596667289,
+                -0.056073980497323345,
+                0.01715287419177462
+              ],
+              [
+                0.007140786276748029,
+                -0.04064771004813013,
+                0.4941936209256028,
+                0.03876635321481159
+              ]
+            ],
+            "roll_rmse": 0.15835778764373762,
+            "yaw_rmse": 0.021412498666794358,
+            "score": 0.179770286310532
+          },
+          {
+            "candidate": "phi_x5_roll_r_down",
+            "q_diag": [
+              100.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              12.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.04725498577801704,
+                0.09290496946801917,
+                -0.05384379675120224,
+                0.01649389219901003
+              ],
+              [
+                0.007843058837357853,
+                -0.03928108115984008,
+                0.4934912073147999,
+                0.03908310139554919
+              ]
+            ],
+            "roll_rmse": 0.15802059523615516,
+            "yaw_rmse": 0.023894962835499245,
+            "score": 0.1819155580716544
+          },
+          {
+            "candidate": "phi_x4_roll_r_more_down",
+            "q_diag": [
+              80.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              10.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.046511680781283433,
+                0.10051199238454155,
+                -0.05734482739177924,
+                0.01715615624227395
+              ],
+              [
+                0.005971529862993053,
+                -0.040841129446922114,
+                0.49388873638738096,
+                0.03876767510930332
+              ]
+            ],
+            "roll_rmse": 0.17945367576781332,
+            "yaw_rmse": 0.027882130103553584,
+            "score": 0.2073358058713669
+          },
+          {
+            "candidate": "phi_x4_roll_r_down",
+            "q_diag": [
+              80.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              12.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.04235042643133555,
+                0.09203516412688213,
+                -0.05497266464153239,
+                0.016480736876241384
+              ],
+              [
+                0.006592654219748497,
+                -0.0395082750534841,
+                0.49317623765653806,
+                0.03907984796547906
+              ]
+            ],
+            "roll_rmse": 0.19143704087322563,
+            "yaw_rmse": 0.026540200077287152,
+            "score": 0.2179772409505128
+          },
+          {
+            "candidate": "phi_x3_roll_r_down",
+            "q_diag": [
+              60.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              12.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.03679335510162307,
+                0.0910440485334697,
+                -0.05630948891456592,
+                0.016466949257315518
+              ],
+              [
+                0.005148448749213495,
+                -0.03977149400695865,
+                0.49279902996222325,
+                0.03907642513450274
+              ]
+            ],
+            "roll_rmse": 0.2556033519516919,
+            "yaw_rmse": 0.04346179420427086,
+            "score": 0.2990651461559628
+          },
+          {
+            "candidate": "phi_x2",
+            "q_diag": [
+              40.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              18.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.02453481074953907,
+                0.07354523013383923,
+                -0.052819484035375355,
+                0.014910265359358965
+              ],
+              [
+                0.004471894069379415,
+                -0.03692663860859311,
+                0.4902342267562476,
+                0.03987637670532861
+              ]
+            ],
+            "roll_rmse": 0.3627311971801358,
+            "yaw_rmse": 0.06778108904071524,
+            "score": 0.430512286220851
+          },
+          {
+            "candidate": "phi_plus_50_roll_r_down",
+            "q_diag": [
+              30.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              15.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.0234757154286797,
+                0.0797764107699316,
+                -0.05586432863956649,
+                0.015567943905424276
+              ],
+              [
+                0.0028223910353234786,
+                -0.038654524286628494,
+                0.49095585465689917,
+                0.039481345644532186
+              ]
+            ],
+            "roll_rmse": 0.4064526301727091,
+            "yaw_rmse": 0.08573824533084248,
+            "score": 0.49219087550355156
+          },
+          {
+            "candidate": "phi_plus_50",
+            "q_diag": [
+              30.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              18.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.021380333818703433,
+                0.07284359544801193,
+                -0.05356746119331277,
+                0.014869902332984667
+              ],
+              [
+                0.0032537214665437197,
+                -0.0372027730323378,
+                0.4899320969612399,
+                0.03986006333747963
+              ]
+            ],
+            "roll_rmse": 0.4089606053519174,
+            "yaw_rmse": 0.08589160996504205,
+            "score": 0.49485221531695944
+          },
+          {
+            "candidate": "current",
+            "q_diag": [
+              20.0,
+              8.0,
+              14.0,
+              18.0
+            ],
+            "r_diag": [
+              18.0,
+              12.0
+            ],
+            "K_physical": [
+              [
+                0.017649484103495892,
+                0.07200649664320055,
+                -0.0544772905166014,
+                0.014820744391636135
+              ],
+              [
+                0.0017938825073480818,
+                -0.037535717619137,
+                0.48956204329821795,
+                0.0398400587996988
+              ]
+            ],
+            "roll_rmse": 0.4648036548725628,
+            "yaw_rmse": 0.10824284521377817,
+            "score": 0.573046500086341
+          }
+        ],
+        "selected_Q": [
+          100.0,
+          8.0,
+          14.0,
+          18.0
+        ],
+        "selected_R": [
+          10.0,
+          12.0
+        ],
+        "selected_K_physical": [
+          [
+            0.05190639762489085,
+            0.10138554596667289,
+            -0.056073980497323345,
+            0.01715287419177462
+          ],
+          [
+            0.007140786276748029,
+            -0.04064771004813013,
+            0.4941936209256028,
+            0.03876635321481159
+          ]
+        ],
+        "A_cl": [
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            -2.664878432691628,
+            -5.594018530704273,
+            4.002655956444851,
+            0.09862559765603907
+          ],
+          [
+            -0.31616657717192226,
+            -0.4491882183934761,
+            -2.494915408277951,
+            -0.07767196028695333
+          ],
+          [
+            -0.3477574744421288,
+            0.7400389267640277,
+            -18.648802794843235,
+            -2.0222658187963893
+          ]
+        ],
+        "closed_loop_eigenvalues": [
+          {
+            "real": -4.214142107783443,
+            "imag": 0.8289852357683754
+          },
+          {
+            "real": -4.214142107783443,
+            "imag": -0.8289852357683754
+          },
+          {
+            "real": -0.5543588578635602,
+            "imag": 0.0
+          },
+          {
+            "real": -1.128556684348172,
+            "imag": 0.0
+          }
+        ],
+        "ambiguity_note": "The exact candidate name was not logged in the March 31 run CSV. The values above are the closest match among the candidates currently present in external/run_controlled.py."
+      },
+      "model_estimation_evidence": {
+        "mimo_model_used_for_controller": {
+          "A": [
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.025545897503950955,
+              -0.7429541311467451,
+              3.9478079552880483,
+              1.1736544817477919
+            ],
+            [
+              -0.005250918858339866,
+              -0.21563339694180422,
+              0.6050596652368583,
+              0.27429734435106445
+            ],
+            [
+              0.04938567372346655,
+              -0.16669281975829087,
+              -3.6107122268414438,
+              -0.7690961777688887
+            ]
+          ],
+          "B": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              50.08144468745593,
+              5.571536812572264
+            ],
+            [
+              5.048178653185756,
+              6.8455892622091215
+            ],
+            [
+              3.4116789187650665,
+              30.816660394425497
+            ]
+          ],
+          "fit": {
+            "p_dot": {
+              "coefficients": [
+                -0.025545897503950955,
+                -0.7429541311467451,
+                3.9478079552880483,
+                1.1736544817477919,
+                50.08144468745593,
+                5.571536812572264
+              ],
+              "r2": 0.47777605514460575
+            },
+            "beta_dot": {
+              "coefficients": [
+                -0.005250918858339866,
+                -0.21563339694180422,
+                0.6050596652368583,
+                0.27429734435106445,
+                5.048178653185756,
+                6.8455892622091215
+              ],
+              "r2": 0.5075959143256861
+            },
+            "r_dot": {
+              "coefficients": [
+                0.04938567372346655,
+                -0.16669281975829087,
+                -3.6107122268414438,
+                -0.7690961777688887,
+                3.4116789187650665,
+                30.816660394425497
+              ],
+              "r2": 0.5599640199826937
+            }
+          },
+          "phi_dot_minus_p_mean_deg_s": -1.2717358354567592,
+          "open_loop_eigenvalues": [
+            {
+              "real": -0.4031490448595495,
+              "imag": 1.2176001776440635
+            },
+            {
+              "real": -0.4031490448595495,
+              "imag": -1.2176001776440635
+            },
+            {
+              "real": 0.046638723375783,
+              "imag": 0.0
+            },
+            {
+              "real": -0.14733127733545937,
+              "imag": 0.0
+            }
+          ],
+          "regression_method": "multivariable least-squares on smoothed state derivatives from external/estimate_lateral_mimo.py"
+        },
+        "earlier_single_input_4state_estimate": {
+          "csv_path": "data/runs/run_1774842591.csv",
+          "raw_row_count": 394,
+          "sample_count_used": 370,
+          "smoothing_window_samples": 7,
+          "model_structure": {
+            "phi_dot": "p",
+            "p_dot": "a_p_phi*phi + a_p_p*p + a_p_beta*beta + a_p_r*r + b_p*u",
+            "beta_dot": "a_b_phi*phi + a_b_p*p + a_b_beta*beta + a_b_r*r + b_beta*u",
+            "r_dot": "a_r_phi*phi + a_r_p*p + a_r_beta*beta + a_r_r*r + b_r*u"
+          },
+          "A": [
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.442334431849896,
+              -0.36077155814273,
+              14.988461146730048,
+              6.107589365856979
+            ],
+            [
+              -0.018409531460375265,
+              -0.031858816290655095,
+              0.5559534945550375,
+              0.25661855403385714
+            ],
+            [
+              0.02178670901819402,
+              0.13854454432039603,
+              -3.4391544481746332,
+              -0.6049611291065001
+            ]
+          ],
+          "B": [
+            [
+              0.0
+            ],
+            [
+              71.01098402990038
+            ],
+            [
+              -1.0910139842867503
+            ],
+            [
+              -7.563575685340627
+            ]
+          ],
+          "fit": {
+            "p_dot": {
+              "coefficients": [
+                -0.442334431849896,
+                -0.36077155814273,
+                14.988461146730048,
+                6.107589365856979,
+                71.01098402990038
+              ],
+              "r2": 0.5258001536836622
+            },
+            "beta_dot": {
+              "coefficients": [
+                -0.018409531460375265,
+                -0.031858816290655095,
+                0.5559534945550375,
+                0.25661855403385714,
+                -1.0910139842867503
+              ],
+              "r2": 0.40287374014795163
+            },
+            "r_dot": {
+              "coefficients": [
+                0.02178670901819402,
+                0.13854454432039603,
+                -3.4391544481746332,
+                -0.6049611291065001,
+                -7.563575685340627
+              ],
+              "r2": 0.5429990132140674
+            }
+          },
+          "phi_dot_minus_p_mean_deg_s": 1.4715549160866932,
+          "open_loop_eigenvalues": [
+            {
+              "real": -0.27042373800236036,
+              "imag": 0.7860864993853013
+            },
+            {
+              "real": -0.27042373800236036,
+              "imag": -0.7860864993853013
+            },
+            {
+              "real": 0.06553414165526414,
+              "imag": 0.11449571513682258
+            },
+            {
+              "real": 0.06553414165526414,
+              "imag": -0.11449571513682258
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "paste_ready_table_markdown": "| Controller | Run | Handoff phi (deg) | Handoff p (deg/s) | Peak |phi| (deg) | RMS phi (deg) | t to |phi|<10 (s) | t to |phi|<5 (s) | Settling (s) | Alt loss (ft) | Max |p| (deg/s) |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| baseline | data/runs/baseline_1775260512.csv | 58.911 | 1.408 | 82.163 | 71.244 | NOT_REACHED | NOT_REACHED | NOT_REACHED | 2729.376 | 4.089 |\n| PD | data/runs/controlled_1774837914.csv | 57.493 | 2.095 | 71.227 | 40.933 | 16.636 | 21.428 | 21.428 | 0.000 | 12.448 |\n| 2-state LQR | data/runs/controlled_1774849067.csv | 57.219 | 1.614 | 61.772 | 58.502 | NOT_REACHED | NOT_REACHED | NOT_REACHED | 503.164 | 2.209 |\n| 2-state LQI | data/runs/controlled_1774927980.csv | 57.189 | 1.715 | 62.772 | 30.841 | 9.587 | 10.463 | 10.463 | 0.000 | 14.949 |\n| 4-state LQR | data/runs/controlled_1774975570.csv | 58.998 | 1.432 | 59.456 | 17.445 | 4.616 | 6.497 | 6.497 | 0.000 | 24.723 |"
+}
